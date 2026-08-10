@@ -24,4 +24,31 @@ Por que importa: lembrar disso ao construir `/next-task` e `/start-project`
 (Etapa 3 do método, e a execução deles na Etapa 5) — ambos devem levar
 `disable-model-invocation: true` no frontmatter.
 
+### 2026-08-10 — construção do /start-project
+
+Contexto: `/start-project` precisa gravar, num projeto novo, o texto de
+`method.md` e os templates de `CLAUDE.md`/`STATE.md` que já existiam em
+`kit/my-method/method.md` (a ser criado) e `kit/my-method/templates/`. O
+que foi feito imediatamente antes: pesquisar se `${CLAUDE_PLUGIN_ROOT}`
+permite que um arquivo de comando (`commands/*.md`) leia outro arquivo
+empacotado no mesmo plugin.
+
+Descoberta: `${CLAUDE_PLUGIN_ROOT}` é confiável em hooks e configuração
+de servidor MCP, mas não expande de forma confiável dentro do conteúdo
+de um comando (`commands/*.md`) — é um bug conhecido e aberto do Claude
+Code. Além disso, mesmo se funcionasse, ler esse caminho significaria
+ler um arquivo fora da pasta do projeto atual — o que a regra global
+"Boundaries" do usuário proíbe explicitamente. Por isso `/start-project`
+não lê `kit/my-method/method.md` nem `kit/my-method/templates/*.md` em
+tempo de execução: o texto de `method.md` e a estrutura de
+`CLAUDE.md`/`STATE.md` foram colados por inteiro dentro do próprio
+`commands/start-project.md`.
+
+Por que importa: isso cria duplicação de verdade — se o texto de
+`method.md` (na raiz do repo) ou os templates em `kit/my-method/templates/`
+mudarem no futuro, a cópia embutida em `commands/start-project.md`
+precisa ser atualizada manualmente à parte, e nada garante hoje que as
+duas fiquem sincronizadas. Se o método for revisado de novo (v4), checar
+esse arquivo primeiro.
+
 ## MINE
