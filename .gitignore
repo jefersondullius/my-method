@@ -1,0 +1,4 @@
+# Local activation link for the my-method plugin (kit/my-method is the source of truth).
+# Git doesn't follow Windows junctions, so without this it would duplicate the plugin's
+# files under .claude/skills/my-method instead of tracking a link.
+.claude/skills/my-method
