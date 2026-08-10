@@ -2,9 +2,10 @@
 
 Plugin do Claude Code (um "plugin" é um pacote de comandos/skills que
 estende o Claude Code) que executa `method.md` — o método de trabalho
-para construir produtos com o Claude fazendo a engenharia. O comando
-principal é `/my-method:next-task`, que executa a próxima tarefa
-pendente do projeto na pasta atual.
+para construir produtos com o Claude fazendo a engenharia. Comece um
+projeto novo com `/my-method:start-project`, numa pasta vazia; depois
+disso, `/my-method:next-task` executa a próxima tarefa pendente do
+projeto na pasta atual, uma por sessão.
 
 ## Como este plugin foi publicado
 
@@ -67,7 +68,21 @@ Deve aparecer `my-method@jeferson-tools` com `Scope: user`.
 
 ## Usando o plugin
 
-O comando `/my-method:next-task` só funciona sendo **digitado
-diretamente** — ele tem `disable-model-invocation: true`, então o
-Claude não pode disparar sozinho a partir de um pedido em linguagem
+Comandos disponíveis:
+
+- `/my-method:start-project` — numa pasta vazia, conduz tudo antes da
+  primeira linha de código: perguntas, SPEC (com gate de aprovação),
+  stack, plano de tarefas (com gate de aprovação), e o primeiro
+  commit. Roda uma vez por projeto, no início.
+- `/my-method:next-task` — executa a próxima tarefa pendente do
+  projeto na pasta atual. É o comando do dia a dia, uma tarefa por
+  sessão.
+- `/my-method:where-am-i` — só resume onde o projeto está agora
+  (tarefa atual, decisões já fechadas, próximo passo). Não muda nada.
+- `/my-method:friction` — registra, verbatim, uma reclamação sobre
+  como o trabalho está sendo conduzido.
+
+Todos os quatro só funcionam sendo **digitados diretamente** — cada um
+tem `disable-model-invocation: true` no seu arquivo, então o Claude
+não pode disparar nenhum sozinho a partir de um pedido em linguagem
 natural.
