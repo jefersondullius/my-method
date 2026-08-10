@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 2026-08-10 — Publicação: de "local por caminho" para marketplace local + escopo de usuário
+
+O piloto (ver ressalva 4 da entrada abaixo) instalava o plugin ligando
+um symlink `.claude/skills/my-method` dentro de cada projeto — uma
+instalação "local por caminho", que precisa ser refeita em todo
+projeto novo. Isso mudou: agora a instalação passa por um marketplace
+local (catálogo em `.claude-plugin/marketplace.json`, nome
+`jeferson-tools`, apontando para `kit/my-method/`) e é registrada com
+**escopo `user`**.
+
+Motivo: eu queria o comando `/my-method:next-task` disponível em
+qualquer projeto que abrisse dali para frente, sem reinstalar
+pasta por pasta. Instalação "local por caminho" sem marketplace amarra
+a um projeto só (equivalente a escopo `project` ou `local`); só um
+marketplace com escopo `user` resolve isso. Passo a passo de
+reinstalação em `README.md`.
+
 ## 2026-08-10 — `/next-task`: teste contra o piloto `meu-organizador`
 
 Status do teste: **Etapa 3 — testada parcialmente, teste de sessão

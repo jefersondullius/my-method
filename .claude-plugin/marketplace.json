@@ -1,0 +1,13 @@
+{
+  "name": "jeferson-tools",
+  "owner": {
+    "name": "Jeferson Dullius"
+  },
+  "plugins": [
+    {
+      "name": "my-method",
+      "source": "./kit/my-method",
+      "description": "Executable form of method.md: the working method for building products with Claude doing the engineering."
+    }
+  ]
+}
