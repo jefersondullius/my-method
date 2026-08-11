@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## 2026-08-11 — teste de integração da trava de commit: PASSOU em sessão nova
+
+Fecha o passo 7 da aplicação da v6 (entrada abaixo). Sessão nova
+headless com o hook carregado, no projeto descartável, rodando de
+propósito em `--permission-mode bypassPermissions` — o modo mais
+permissivo que existe — porque a documentação diz que o PreToolUse
+dispara antes dele; este teste confirma na prática.
+
+Resultado, verbatim da sessão de teste:
+
+- Commit sem evidência → **NEGADO** com a razão exata do gate ("no
+  verify evidence at .claude/last-verify.json…"). O hook do plugin
+  carregou em sessão nova, disparou pelo harness real e travou um
+  `git commit` de verdade mesmo com permissões em bypass. A expansão
+  de `${CLAUDE_PLUGIN_ROOT}` no comando do hook funcionou na
+  instalação em escopo user — item que estava NOT VERIFIED na
+  proposta, agora confirmado ao vivo.
+- `scripts/verify.ps1` → `VERIFY: PASS` (evidência gravada).
+- Novo commit com evidência fresca → **LIBERADO**.
+- `git log` conferido de forma independente: o commit negado NÃO
+  existe no histórico; só o liberado entrou ("gate probe 2" sobre
+  "initial").
+
+Os casos que não dependem do harness já haviam passado 13/13 no teste
+unitário (entrada abaixo). O caso 7j (commit digitado por você num
+terminal fora do Claude Code não é vigiado) permanece como
+comportamento esperado por definição — hooks só veem ferramentas.
+
+Com isto, os passos 12 e 13 do alvo saem de prosa (L3) para
+determinismo com evidência (L1 + L4): commit sem verificação fresca,
+ou commit de tarefa sem os arquivos de status e a evidência juntos, é
+negado pelo harness, não pela boa vontade do modelo.
+
 ## 2026-08-11 — method v6 aplicado: trava de commit por evidência (D5)
 
 Aplicada a proposta `notes/method-v6-commit-gate-proposal.md`, na
