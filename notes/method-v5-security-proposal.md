@@ -1,9 +1,15 @@
 # PROPOSAL — method.md v5, security wiring (audit-03 third design)
 
-Status: **proposed, awaiting the user's approval of this text. Nothing applied.**
-Design approval: granted in session 3, 2026-08-10 ("Aprovo o terceiro desenho") —
-this document is the text-level proposal that decision asked for; application
-happens only after the user approves the text below.
+Status: **approved and applied, 2026-08-10.** Kept as the record of what was
+proposed; the apply commit carries all mirrors (see git history and CHANGELOG).
+Text approval: granted by the user in session 3, 2026-08-10 ("Aprovo o texto —
+aplique na ordem da proposta"); design approval earlier the same session
+("Aprovo o terceiro desenho"). One apply-time deviation, disclosed: the agent
+frontmatter gained `name: security-reviewer` (required for subagent
+registration; identical to the filename). Verify-at-apply (step 8) was
+attempted in-session and failed with "Agent type 'security-reviewer' not
+found" — plugin agents load at session start; the test is PENDING a fresh
+session, recorded as CHANGELOG caveat 1.
 
 Provenance: audit-01 step-12 finding 1 + recommendation 1 (SECURITY-MATRIX wired to
 nothing) and the audit-03 verdict (`notes/audit-03-agents.md`, section e, D1–D5),

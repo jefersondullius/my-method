@@ -14,6 +14,7 @@ Test: `<command>`
 
 ```
 method.md        the method this project follows (do not edit)
+SECURITY-MATRIX.md  security checks for this project's tier (do not edit)
 friction.md       YOURS / MINE — friction log, appended verbatim
 SPEC.md           behaviour spec, agreed with the user
 STATE.md          project memory — read this first, every session

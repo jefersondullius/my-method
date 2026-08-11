@@ -6,7 +6,10 @@
 
 ## How we will check it
 
-<!-- Something the user can see, or a command that can prove it. -->
+<!-- Something the user can see, or a command that can prove it.
+     Include the applicable SECURITY-MATRIX.md rows for this
+     project's tier (row ID + required check), or state
+     "Security: none applicable". -->
 
 ## Files it touches
 

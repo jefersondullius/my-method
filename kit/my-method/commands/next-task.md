@@ -38,6 +38,11 @@ ask it now, before writing or changing anything — one interruption,
 at the very beginning. Wait for the answer before proceeding to (c).
 Do not raise questions mid-task once (c) has started.
 
+If the card carries a HUMAN DECISION security row that shapes how the
+task is built (e.g. 3.2 auth library, 5.3 hosted checkout, 6.3 upload
+storage, 10.3 new dependency), ask it here, as part of this same
+single interruption — the row's question verbatim, in Portuguese.
+
 ## c) Build
 
 Build exactly what the card describes under "What concretely exists
@@ -61,6 +66,31 @@ Follow the card's "How we will check it".
 - If any check fails: the task is NOT complete. Stop here. Do not
   update status files. Do not commit. Go to the Stuck Protocol below
   if this is the second consecutive failure of the same check.
+
+Security rows on the card run inside this step, by kind:
+
+1. Drift check first: compare the diff against the card's declared
+   surfaces. If the work turned on a surface the card does not
+   declare (new endpoint, new dependency, upload path, stored
+   secret…), open the project's `SECURITY-MATRIX.md` — only in this
+   case; minimum reading holds otherwise — pull that surface's rows
+   into the card, and say so in Portuguese.
+2. AUTOMATED rows: run the commands here, raw output on screen. They
+   join the regression set re-run by every later task.
+3. REVIEW rows: send ALL of them in ONE invocation of the
+   `security-reviewer` subagent (read-only; it cannot edit or run
+   anything), passing three things: the rows verbatim, the list of
+   files the task touched, and the raw diff. Show its findings raw
+   and record any open finding on the card BEFORE fixing anything.
+4. HUMAN DECISION rows not already asked at (b): ask the row's
+   question verbatim, in Portuguese. Never answer it on the user's
+   behalf; never mark it resolved without their explicit answer.
+5. Fix loop: fix failures in this session, within the card's file
+   scope, only after findings are displayed and recorded. Then re-run
+   the AUTOMATED rows and send the updated diff to a NEW
+   `security-reviewer` invocation. You never declare a REVIEW row
+   passed — only a fresh reviewer's "no open HIGH or CRITICAL
+   finding" verdict does. Second failed round of the same row → (f).
 
 ## e) Close the task
 

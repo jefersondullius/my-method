@@ -1,11 +1,14 @@
-# METHOD — v4 (post-audit-02)
+# METHOD — v5 (post-audit-03)
 
-*Nota (pt-BR): quarta versão. As três primeiras só mudaram o que uma
-entrada de friction concreta justificou; a v4 abre uma exceção
-consciente: o Step 1 foi revisado a partir de uma comparação deliberada
-com a skill "grilling" (auditoria 02, 2026-08-10), por decisão do
-usuário, com a proveniência registrada em friction.md. Nenhum outro
-passo mudou.*
+*Nota (pt-BR): quinta versão. Regra de origem: mudar só com friction
+concreta; a v4 (Step 1, comparação com "grilling") foi a primeira
+exceção consciente e a v5 é a segunda — o wiring de segurança nasce da
+lacuna registrada na auditoria 01 (matriz ligada a nada) e do desenho
+aprovado na auditoria 03 (2026-08-10), por decisão explícita do
+usuário, com proveniência em friction.md. Mudanças da v5: STEP 0
+(cópia da matriz no projeto), STEP 4 (triagem de tier + linhas nas
+fichas), STEP 5c (checagens por tipo, revisor só-leitura, laço de
+correção). Nenhum outro passo mudou.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -17,6 +20,10 @@ passo mudou.*
    appends verbatim to the `MINE` section — the user's text, which
    task/step was in progress, what was just done immediately before —
    with no paraphrasing and no evaluation of the complaint.
+4. Save the security matrix's own text as `SECURITY-MATRIX.md` in the
+   project root, next to `method.md`. Step 4 triages from it, cards
+   cite its rows, and Step 5c re-opens it when the work turns on a
+   risk surface the plan did not declare.
 
 *Nota (pt-BR): no piloto, o texto do método em si nunca foi salvo em
 disco — existiu só dentro de conversas que depois levaram `/clear`.
@@ -87,6 +94,18 @@ Break the work into tasks. Write:
   user can see or a command can prove; which files it touches; does
   it fit in one session (if not, split now); status.
 
+Security rows — before showing the plan: triage the project's
+security tier (T0–T3) per `SECURITY-MATRIX.md`, from the Step 1
+answers and the approved SPEC. Tell the user the tier and its reason
+in one line, in Portuguese. Copy every in-scope row (ID + required
+check) into "How we will check it" of each card whose work touches
+that surface — every in-scope row lands on at least one card; a row
+with no natural home (e.g. deployment) goes on the card where it
+first becomes checkable. A card touching no surface states
+"Security: none applicable". Record the tier and its reason in
+`STATE.md`'s settled decisions. This adds no sixth field and no
+second question — Gate 2 stays exactly one question.
+
 Then ask exactly one question in Portuguese: "você reconhece o seu
 produto nesta lista?" — confirming the product being built, not the
 technical sequencing. **After this question is answered, end the turn
@@ -112,6 +131,26 @@ c) VERIFY — not negotiable: **attempt automated verification first**;
    the RAW OUTPUT of whatever proves it; re-run everything that
    already existed, not only the new check; give the user something to
    confirm with their own eyes wherever possible.
+   The card's security rows run inside this step, by kind:
+   - Drift first: if the diff turned on a risk surface the card does
+     not declare (new endpoint, new dependency, upload path, stored
+     secret…), pull that surface's rows from `SECURITY-MATRIX.md`
+     into the card now and say so — the matrix's own re-triage rule.
+   - AUTOMATED rows are commands, run here, raw output on screen;
+     they join the regression set and are re-run by every later task.
+   - REVIEW rows go, all together, to ONE fresh invocation of the
+     read-only `security-reviewer` subagent, with the diff; findings
+     (severity + `file:line`) are shown raw and recorded on the card
+     BEFORE anything is fixed. The reviewer cannot edit; it reports.
+   - HUMAN DECISION rows are asked to the user verbatim, in
+     Portuguese, never answered on their behalf. A row that shapes
+     how the task is built is asked before building starts, not here.
+   - Fix loop: failures are fixed in this session, within the card's
+     file scope, only after findings are shown and recorded; then the
+     AUTOMATED rows re-run and the updated diff goes to a NEW
+     reviewer invocation. This session never declares a REVIEW row
+     passed — only a fresh reviewer's "no open HIGH or CRITICAL
+     finding" does. Two failed rounds of the same row → Step 6.
 d) Sync EVERY status-bearing file in one commit — `STATE.md`, `PLAN.md`
    row, and the task's own card (`plan/TASK-XXX.md`) — not just
    `STATE.md`. Commit in English. **Then end the turn with exactly

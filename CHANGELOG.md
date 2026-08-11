@@ -1,5 +1,62 @@
 # CHANGELOG
 
+## 2026-08-10 — method v5: wiring de segurança aplicado (matriz → plano → verificação)
+
+Aplicada a proposta `notes/method-v5-security-proposal.md`, na ordem
+dela:
+
+- `playbook/SECURITY-MATRIX.md`: seção "WHERE THIS FILE LIVES",
+  parágrafo do revisor só-leitura em "HOW TO READ EACH ROW", e quinta
+  coluna **Fix direction** nas 31 linhas das 10 tabelas.
+- `method.md` → **v5**: STEP 0 grava `SECURITY-MATRIX.md` no projeto;
+  STEP 4 faz a triagem T0–T3 e copia as linhas aplicáveis para dentro
+  de "How we will check it" das fichas; STEP 5c executa as checagens
+  por tipo (AUTOMATED / REVIEW / HUMAN DECISION), com checagem de
+  deriva e laço construtor-corrige / revisor-fresco-rejulga.
+- `kit/my-method/commands/start-project.md`: espelhos operacionais
+  (triagem no Step 4, staging, templates de CLAUDE/STATE) e as duas
+  cópias embutidas atualizadas — método v5 e matriz revisada. O
+  arquivo agora carrega TRÊS textos embutidos (método, matriz,
+  templates); a armadilha de duplicação está registrada em
+  `friction.md`: revisão futura de método ou matriz toca o arquivo
+  canônico E as cópias embutidas no mesmo commit.
+- `kit/my-method/commands/next-task.md`: (b) ganha a pergunta das
+  linhas HUMAN DECISION que moldam a construção; (d) ganha o
+  procedimento de segurança em 5 passos (deriva → AUTOMATED → REVIEW
+  → HUMAN DECISION → laço de correção).
+- NOVO `kit/my-method/agents/security-reviewer.md`: revisor
+  só-leitura (`tools: Read, Grep, Glob`), formato de achado fixo e
+  veredito literal PASS/FAIL.
+- Templates: `TASK-XXX.md` (comentário de "How we will check it"),
+  `STATE.md` (tier nas settled decisions), `CLAUDE.md` (linha da
+  matriz no layout).
+
+Desvio único em relação ao texto aprovado, declarado: o frontmatter
+do agente ganhou `name: security-reviewer` — campo exigido para o
+registro de subagentes; idêntico ao nome do arquivo.
+
+Ressalvas de teste desta aplicação:
+
+1. O teste do allowlist (passo 8 da proposta) foi TENTADO nesta mesma
+   sessão e a invocação falhou com "Agent type 'security-reviewer'
+   not found" — agentes de plugin carregam no início da sessão. O
+   teste fica PENDENTE para uma sessão nova; se a instalação em
+   escopo user for uma cópia congelada do kit, pode exigir
+   atualização/reinstalação via `/plugin` antes (qual dos dois casos
+   vale: não verificado). Até esse teste passar, o "só-leitura" do
+   revisor vale como prosa, não como garantia estrutural.
+2. Nenhum projeto passou de ponta a ponta por triagem → fichas →
+   verificação com o texto novo; o primeiro uso real é o teste.
+3. Sem o hook de commit (D5, rec 2 da audit-01 — fora do escopo desta
+   aplicação por decisão registrada), nada determinístico impede
+   pular o procedimento inteiro: enforcement em L3 + L4.
+
+Na prática: em projetos criados daqui em diante, toda ficha nasce com
+as checagens de segurança do tier do projeto dentro de "How we will
+check it", e o fim de cada tarefa executa essas checagens por tipo —
+com os achados na tela antes de qualquer conserto, e decisões que são
+suas chegando como pergunta, nunca respondidas por conta.
+
 ## 2026-08-10 — `/start-project`: construído e testado contra uma ideia descartável
 
 Construí `kit/my-method/commands/start-project.md` — o comando de

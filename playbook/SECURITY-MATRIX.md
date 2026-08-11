@@ -31,6 +31,15 @@ not own. Do not scan, fuzz, or load-test a third party's endpoint even
 - The goal is narrower and more honest than "secure": catch the
   mistakes that are common, cheap to check, and expensive to ship.
 
+## WHERE THIS FILE LIVES
+
+The canonical copy is `playbook/SECURITY-MATRIX.md` in the my-method
+repo. `start-project` writes a byte-identical copy into every new
+project's root as `SECURITY-MATRIX.md` — a project session never
+reads the repo's copy (Boundaries rule). The project copy is the one
+Step 4 triages from, cards cite, and Step 5c re-opens when a new
+surface turns on mid-project.
+
 ## PROPORTIONALITY — not every project needs every row
 
 Applying all ten risk surfaces to a project with no login and no
@@ -65,110 +74,117 @@ Every check is classified into exactly one kind:
   is a tradeoff, a business call, or depends on information outside
   the code. Stated as a yes/no question in Portuguese.
 
+REVIEW rows are executed by the plugin's `security-reviewer` agent,
+defined with a read-only tool allowlist (`Read, Grep, Glob`): it can
+read code and return findings; it cannot edit files or run commands.
+It never fixes. Fixing is the building session's job, and a fixed
+diff is re-judged by a NEW reviewer invocation — never by the session
+that fixed it, and never by the reviewer invocation that found it.
+
 ---
 
 ## 1. data-store
 
 *In scope from Tier T1 up, whenever the project persists anything.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 1.1 | No SQL/query built by string concatenation of user input | **AUTOMATED** — run a static scanner with an injection ruleset (e.g. `semgrep --config p/owasp-top-ten` — Semgrep's OWASP Top 10 ruleset maps rules directly to injection and access-control categories[^semgrep]) over the diff. | Scanner reports zero findings of ERROR/HIGH severity in the injection rule family. |
-| 1.2 | Every query that touches "another user's row" is scoped to the logged-in user, not to an ID taken raw from the request | **REVIEW** — subagent reads the diff for every query/ORM call touching this data store and checks the `WHERE`/filter clause against the authenticated user. | No open HIGH/CRITICAL finding. |
-| 1.3 | Passwords and other secrets-shaped fields (tokens, card data) are never stored as plain text or reversibly encrypted | **REVIEW** — subagent inspects the schema and every write path to a "password"/"token"/"secret" column for hashing (Argon2id/bcrypt) instead of storage-as-is[^password]. | No open HIGH/CRITICAL finding. |
-| 1.4 | The database user/role this project's code connects as has only the privileges the app needs (not the provider's admin/root account) | **HUMAN DECISION** — "O usuário de banco de dados que a aplicação usa para se conectar tem só as permissões que ela realmente precisa (não é a conta admin/root do provedor)?" | Jeferson answers yes, or creates a scoped-down user before shipping. |
-| 1.5 | Backups exist for any data that would hurt to lose | **HUMAN DECISION** — "O provedor de banco de dados escolhido faz backup automático, e você confirmou que ele está ligado?" | Jeferson answers yes, or accepts the risk explicitly. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 1.1 | No SQL/query built by string concatenation of user input | **AUTOMATED** — run a static scanner with an injection ruleset (e.g. `semgrep --config p/owasp-top-ten` — Semgrep's OWASP Top 10 ruleset maps rules directly to injection and access-control categories[^semgrep]) over the diff. | Scanner reports zero findings of ERROR/HIGH severity in the injection rule family. | Replace string concatenation with parameterized queries / ORM binding. |
+| 1.2 | Every query that touches "another user's row" is scoped to the logged-in user, not to an ID taken raw from the request | **REVIEW** — subagent reads the diff for every query/ORM call touching this data store and checks the `WHERE`/filter clause against the authenticated user. | No open HIGH/CRITICAL finding. | Scope the query to the logged-in user's ID in the WHERE/filter, server-side. |
+| 1.3 | Passwords and other secrets-shaped fields (tokens, card data) are never stored as plain text or reversibly encrypted | **REVIEW** — subagent inspects the schema and every write path to a "password"/"token"/"secret" column for hashing (Argon2id/bcrypt) instead of storage-as-is[^password]. | No open HIGH/CRITICAL finding. | Hash with Argon2id/bcrypt via the auth library; migrate stored values; never store raw. |
+| 1.4 | The database user/role this project's code connects as has only the privileges the app needs (not the provider's admin/root account) | **HUMAN DECISION** — "O usuário de banco de dados que a aplicação usa para se conectar tem só as permissões que ela realmente precisa (não é a conta admin/root do provedor)?" | Jeferson answers yes, or creates a scoped-down user before shipping. | Create a scoped DB role with only the needed privileges; point the app's connection at it. |
+| 1.5 | Backups exist for any data that would hurt to lose | **HUMAN DECISION** — "O provedor de banco de dados escolhido faz backup automático, e você confirmou que ele está ligado?" | Jeferson answers yes, or accepts the risk explicitly. | Turn on the provider's automatic backups. |
 
 ## 2. external-api
 
 *In scope from Tier T1 up, whenever the project calls a third-party service.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 2.1 | No API key/secret hardcoded in a request to the external service | **AUTOMATED** — run `gitleaks` (or equivalent secret scanner) against the diff and the full history before first push[^gitleaks]. | Zero findings. |
-| 2.2 | Calls to the external service have a timeout and handle a failure/error response without crashing or leaking internals | **REVIEW** — subagent checks every call site for a timeout and an error branch. | No open HIGH/CRITICAL finding. |
-| 2.3 | The API key generated for this project is scoped to only what this project needs, not a full-account/admin key | **HUMAN DECISION** — "A chave de API que você gerou para este projeto tem permissão só para o que ele precisa, e não é uma chave de administrador da sua conta inteira no provedor?" | Jeferson answers yes, or generates a scoped key before shipping. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 2.1 | No API key/secret hardcoded in a request to the external service | **AUTOMATED** — run `gitleaks` (or equivalent secret scanner) against the diff and the full history before first push[^gitleaks]. | Zero findings. | Move the key to an environment variable AND rotate it at the provider — it is burned. |
+| 2.2 | Calls to the external service have a timeout and handle a failure/error response without crashing or leaking internals | **REVIEW** — subagent checks every call site for a timeout and an error branch. | No open HIGH/CRITICAL finding. | Add a timeout and an error branch that fails gracefully without leaking internals. |
+| 2.3 | The API key generated for this project is scoped to only what this project needs, not a full-account/admin key | **HUMAN DECISION** — "A chave de API que você gerou para este projeto tem permissão só para o que ele precisa, e não é uma chave de administrador da sua conta inteira no provedor?" | Jeferson answers yes, or generates a scoped key before shipping. | Generate a scoped key at the provider; replace and revoke the broad one. |
 
 ## 3. authentication
 
 *In scope from Tier T2 up.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 3.1 | Passwords are hashed with a slow, salted algorithm (Argon2id or bcrypt), never a fast general-purpose hash (MD5/SHA-family alone) | **REVIEW** — subagent inspects the password-write and password-check code paths[^password]. | No open HIGH/CRITICAL finding. |
-| 3.2 | Login/authentication logic uses a maintained library (framework-provided auth, Passport, NextAuth, Supabase/Auth0, Django auth — not code written from scratch for hashing or session tokens) | **HUMAN DECISION** — "Você concorda em usar uma biblioteca de autenticação pronta e testada, em vez de escrevermos a lógica de login/senha do zero?" | Jeferson answers yes; if no, the REVIEW bar for 3.1 and 3.3 tightens (custom crypto gets adversarial review, not a pass by default). |
-| 3.3 | The login endpoint rejects a wrong password without revealing whether the *username/e-mail* itself exists | **AUTOMATED** — a written test hits the login endpoint with (a) a real e-mail + wrong password and (b) a fake e-mail + any password, and asserts both responses are identical (same status code, same message, no timing tell built into the test). | Test passes: both attempts return the same generic failure. |
-| 3.4 | Sessions/tokens expire and can be invalidated (logout actually ends the session) | **REVIEW** — subagent checks session/token issuance for an expiry and checks that logout revokes it server-side (not just clears the client cookie). | No open HIGH/CRITICAL finding. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 3.1 | Passwords are hashed with a slow, salted algorithm (Argon2id or bcrypt), never a fast general-purpose hash (MD5/SHA-family alone) | **REVIEW** — subagent inspects the password-write and password-check code paths[^password]. | No open HIGH/CRITICAL finding. | Switch to Argon2id/bcrypt via the auth library; force resets if plaintext was ever stored. |
+| 3.2 | Login/authentication logic uses a maintained library (framework-provided auth, Passport, NextAuth, Supabase/Auth0, Django auth — not code written from scratch for hashing or session tokens) | **HUMAN DECISION** — "Você concorda em usar uma biblioteca de autenticação pronta e testada, em vez de escrevermos a lógica de login/senha do zero?" | Jeferson answers yes; if no, the REVIEW bar for 3.1 and 3.3 tightens (custom crypto gets adversarial review, not a pass by default). | Adopt a maintained auth library; do not patch the hand-rolled code. |
+| 3.3 | The login endpoint rejects a wrong password without revealing whether the *username/e-mail* itself exists | **AUTOMATED** — a written test hits the login endpoint with (a) a real e-mail + wrong password and (b) a fake e-mail + any password, and asserts both responses are identical (same status code, same message, no timing tell built into the test). | Test passes: both attempts return the same generic failure. | Return one identical generic status + message for both failure cases. |
+| 3.4 | Sessions/tokens expire and can be invalidated (logout actually ends the session) | **REVIEW** — subagent checks session/token issuance for an expiry and checks that logout revokes it server-side (not just clears the client cookie). | No open HIGH/CRITICAL finding. | Set expiry at issuance; revoke server-side on logout. |
 
 ## 4. authorization
 
 *In scope from Tier T2 up.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 4.1 | Every endpoint/action that reads or writes a specific user's data checks that the logged-in user owns that data (no Insecure Direct Object Reference)[^idor] | **REVIEW** — subagent walks every route/handler that takes an ID (user ID, order ID, document ID, etc.) from the request and verifies an ownership check exists before the read/write. | No open HIGH/CRITICAL finding. |
-| 4.2 | Changing an ID in the request (e.g. `/orders/123` → `/orders/124`) while logged in as a different user does not return or modify that other user's data | **AUTOMATED** — a written test: log in as user A, request/modify a resource ID known to belong to user B, assert a 403/404, not the data. | Test passes for every resource type that belongs to a specific user. |
-| 4.3 | Admin-only or privileged actions check the role/permission server-side, not just hide the button in the UI | **REVIEW** — subagent checks that every privileged action re-checks the role on the server, independent of what the client sends or shows. | No open HIGH/CRITICAL finding. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 4.1 | Every endpoint/action that reads or writes a specific user's data checks that the logged-in user owns that data (no Insecure Direct Object Reference)[^idor] | **REVIEW** — subagent walks every route/handler that takes an ID (user ID, order ID, document ID, etc.) from the request and verifies an ownership check exists before the read/write. | No open HIGH/CRITICAL finding. | Add an ownership check (resource owner == logged-in user) before the read/write. |
+| 4.2 | Changing an ID in the request (e.g. `/orders/123` → `/orders/124`) while logged in as a different user does not return or modify that other user's data | **AUTOMATED** — a written test: log in as user A, request/modify a resource ID known to belong to user B, assert a 403/404, not the data. | Test passes for every resource type that belongs to a specific user. | Fix the ownership check in the failing handler; re-run the user-A/user-B test. |
+| 4.3 | Admin-only or privileged actions check the role/permission server-side, not just hide the button in the UI | **REVIEW** — subagent checks that every privileged action re-checks the role on the server, independent of what the client sends or shows. | No open HIGH/CRITICAL finding. | Re-check the role server-side inside the privileged handler itself. |
 
 ## 5. payments
 
 *In scope from Tier T3, only if the project charges money.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 5.1 | This project's own code never receives, stores, logs, or transmits a raw card number/CVV — card entry happens on the payment provider's own hosted page/element (Stripe Checkout/Elements or equivalent) | **REVIEW** — subagent scans the diff for any field or variable that looks like a raw card number/CVV/expiry being read or stored by this project's code. This is also the single biggest scope-reducer for a small project: see `research/13-testing-strategy.md` for why. | No open HIGH/CRITICAL finding: zero raw-card-data handling found in this project's code. |
-| 5.2 | Payment provider webhooks verify the provider's signature before trusting the payload | **REVIEW** — subagent checks the webhook handler for signature verification before any state change. | No open HIGH/CRITICAL finding. |
-| 5.3 | Using a hosted checkout/elements flow (never collecting the card number on this project's own page) is a deliberate choice, confirmed | **HUMAN DECISION** — "Você concorda em usar o checkout hospedado do provedor de pagamento (ex.: Stripe Checkout), em vez de coletarmos o número do cartão na nossa própria página?" | Jeferson answers yes. A "no" here reopens PCI-DSS scope well beyond what this matrix covers, and needs a specialist, not this checklist. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 5.1 | This project's own code never receives, stores, logs, or transmits a raw card number/CVV — card entry happens on the payment provider's own hosted page/element (Stripe Checkout/Elements or equivalent) | **REVIEW** — subagent scans the diff for any field or variable that looks like a raw card number/CVV/expiry being read or stored by this project's code. This is also the single biggest scope-reducer for a small project: see `research/13-testing-strategy.md` for why. | No open HIGH/CRITICAL finding: zero raw-card-data handling found in this project's code. | Remove all raw-card handling from this codebase; use the provider's hosted checkout/element. |
+| 5.2 | Payment provider webhooks verify the provider's signature before trusting the payload | **REVIEW** — subagent checks the webhook handler for signature verification before any state change. | No open HIGH/CRITICAL finding. | Verify the provider's webhook signature before any state change. |
+| 5.3 | Using a hosted checkout/elements flow (never collecting the card number on this project's own page) is a deliberate choice, confirmed | **HUMAN DECISION** — "Você concorda em usar o checkout hospedado do provedor de pagamento (ex.: Stripe Checkout), em vez de coletarmos o número do cartão na nossa própria página?" | Jeferson answers yes. A "no" here reopens PCI-DSS scope well beyond what this matrix covers, and needs a specialist, not this checklist. | Switch to hosted checkout; if refused, stop — that is specialist territory per the row. |
 
 ## 6. file-upload
 
 *In scope from Tier T3, only if the project accepts files from users.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 6.1 | Accepted file types are checked against an allowlist (only the extensions/MIME types the feature needs), not a blocklist[^fileupload] | **REVIEW** — subagent checks the upload handler's validation logic. | No open HIGH/CRITICAL finding. |
-| 6.2 | Oversized uploads are rejected | **AUTOMATED** — a written test uploads a file above the configured limit and asserts rejection. | Test passes. |
-| 6.3 | Uploaded files are stored/served in a way that cannot be executed as code by the server (outside the web root, or served with a content-type that forces download, or via object storage) | **HUMAN DECISION** — "Os arquivos enviados pelos usuários vão ficar guardados num lugar de onde o servidor não pode executá-los como código (ex.: um bucket de armazenamento, não a mesma pasta que serve o site)?" | Jeferson answers yes, or the hosting choice is adjusted before shipping. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 6.1 | Accepted file types are checked against an allowlist (only the extensions/MIME types the feature needs), not a blocklist[^fileupload] | **REVIEW** — subagent checks the upload handler's validation logic. | No open HIGH/CRITICAL finding. | Replace the blocklist with an allowlist of only the types the feature needs. |
+| 6.2 | Oversized uploads are rejected | **AUTOMATED** — a written test uploads a file above the configured limit and asserts rejection. | Test passes. | Enforce the size limit server-side, before reading the whole body. |
+| 6.3 | Uploaded files are stored/served in a way that cannot be executed as code by the server (outside the web root, or served with a content-type that forces download, or via object storage) | **HUMAN DECISION** — "Os arquivos enviados pelos usuários vão ficar guardados num lugar de onde o servidor não pode executá-los como código (ex.: um bucket de armazenamento, não a mesma pasta que serve o site)?" | Jeferson answers yes, or the hosting choice is adjusted before shipping. | Move uploads to object storage or outside the web root; serve with a download-forcing content type. |
 
 ## 7. user-input
 
 *In scope from Tier T0 up, whenever the project renders or stores anything a user typed.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 7.1 | User-typed text is never inserted into HTML/SQL/shell commands by raw string concatenation | **AUTOMATED** — `semgrep --config p/owasp-top-ten` (or the framework's built-in escaping check) over the diff[^semgrep]. | Zero ERROR/HIGH findings. |
-| 7.2 | Every field with a size/format expectation (e-mail, amount, date, ID) is validated server-side, not only in the browser | **REVIEW** — subagent checks that server-side handlers validate input independent of any client-side check. | No open HIGH/CRITICAL finding. |
-| 7.3 | Submitting a `<script>` tag or similar payload in a text field does not execute when the field is later displayed | **AUTOMATED** — a written test submits a script-tag string through the field and asserts the rendered output is escaped, not executed. | Test passes. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 7.1 | User-typed text is never inserted into HTML/SQL/shell commands by raw string concatenation | **AUTOMATED** — `semgrep --config p/owasp-top-ten` (or the framework's built-in escaping check) over the diff[^semgrep]. | Zero ERROR/HIGH findings. | Use the framework's escaping/parameterization instead of concatenation. |
+| 7.2 | Every field with a size/format expectation (e-mail, amount, date, ID) is validated server-side, not only in the browser | **REVIEW** — subagent checks that server-side handlers validate input independent of any client-side check. | No open HIGH/CRITICAL finding. | Add server-side validation for the field, independent of any client check. |
+| 7.3 | Submitting a `<script>` tag or similar payload in a text field does not execute when the field is later displayed | **AUTOMATED** — a written test submits a script-tag string through the field and asserts the rendered output is escaped, not executed. | Test passes. | Escape at render time (framework auto-escaping); never inject raw HTML. |
 
 ## 8. secrets-and-config
 
 *In scope from Tier T0 up, whenever any key/token/password exists in the project at all.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 8.1 | No key, password, or token appears in a file tracked by git | **AUTOMATED** — `gitleaks git -s .` (scans full git history, not just the working tree)[^gitleaks], run before the first push and before every subsequent push. | Zero findings. |
-| 8.2 | `.env` (or equivalent secret file) is listed in `.gitignore` before it is ever created | **AUTOMATED** — a command checks `.gitignore` contains the env-file pattern; fails if the file is tracked. | Check passes. |
-| 8.3 | Development and production use different secrets (a leaked dev key cannot touch production data) | **HUMAN DECISION** — "As chaves/segredos do ambiente de desenvolvimento são diferentes das chaves de produção?" | Jeferson answers yes, or separates them before shipping. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 8.1 | No key, password, or token appears in a file tracked by git | **AUTOMATED** — `gitleaks git -s .` (scans full git history, not just the working tree)[^gitleaks], run before the first push and before every subsequent push. | Zero findings. | Rotate the credential NOW (history rewrite alone is not enough), move it to an env var, then scrub history. |
+| 8.2 | `.env` (or equivalent secret file) is listed in `.gitignore` before it is ever created | **AUTOMATED** — a command checks `.gitignore` contains the env-file pattern; fails if the file is tracked. | Check passes. | Add the pattern to `.gitignore` and untrack the file (`git rm --cached`). |
+| 8.3 | Development and production use different secrets (a leaked dev key cannot touch production data) | **HUMAN DECISION** — "As chaves/segredos do ambiente de desenvolvimento são diferentes das chaves de produção?" | Jeferson answers yes, or separates them before shipping. | Issue separate production secrets; a dev key never touches prod. |
 
 ## 9. deployment
 
 *In scope from Tier T1 up, whenever the project is reachable over the network.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 9.1 | The deployed site is only reachable over HTTPS (HTTP redirects or is refused) | **AUTOMATED** — a script requests the deployed URL over plain HTTP and asserts a redirect to HTTPS, or connection refusal. | Check passes. |
-| 9.2 | Debug/verbose mode is off in production (stack traces and internal errors are not shown to the end user) | **REVIEW** — subagent checks the production config/environment for debug flags. | No open HIGH/CRITICAL finding. |
-| 9.3 | Basic security response headers are present (at minimum: no `X-Powered-By` leak, `Strict-Transport-Security`, sane `Content-Security-Policy` if the framework supports it easily) | **AUTOMATED** — a script requests the deployed URL and checks response headers against the minimum list. | Check passes. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 9.1 | The deployed site is only reachable over HTTPS (HTTP redirects or is refused) | **AUTOMATED** — a script requests the deployed URL over plain HTTP and asserts a redirect to HTTPS, or connection refusal. | Check passes. | Enable HTTPS-only / HTTP→HTTPS redirect at the host. |
+| 9.2 | Debug/verbose mode is off in production (stack traces and internal errors are not shown to the end user) | **REVIEW** — subagent checks the production config/environment for debug flags. | No open HIGH/CRITICAL finding. | Turn the debug flag off in the production environment. |
+| 9.3 | Basic security response headers are present (at minimum: no `X-Powered-By` leak, `Strict-Transport-Security`, sane `Content-Security-Policy` if the framework supports it easily) | **AUTOMATED** — a script requests the deployed URL and checks response headers against the minimum list. | Check passes. | Add the missing headers via host or framework config. |
 
 ## 10. third-party-dependency
 
 *In scope from Tier T0 up, whenever the project uses any external library/package.*
 
-| # | Required check | How it is performed | Pass criterion |
-|---|---|---|---|
-| 10.1 | No dependency has a known HIGH/CRITICAL vulnerability | **AUTOMATED** — the ecosystem's own scanner: `npm audit` for Node[^npmaudit], `pip-audit` for Python[^pipaudit], or equivalent, run before every commit that touches dependencies. | Zero HIGH/CRITICAL vulnerabilities reported (moderate/low are logged, not blocking). |
-| 10.2 | The lockfile (`package-lock.json`, `poetry.lock`, etc.) is committed, so installs are reproducible | **AUTOMATED** — a check that the lockfile exists and is tracked by git. | Check passes. |
-| 10.3 | A new dependency was actually necessary for this task, not a convenience pull for something a few lines of code would do | **HUMAN DECISION**, triggered whenever a new dependency is added — stated per `method.md`'s existing rule to explain any new package before installing it, not a new gate here. | Explained to Jeferson before install, per the global CLAUDE.md rule already in force. |
+| # | Required check | How it is performed | Pass criterion | Fix direction |
+|---|---|---|---|---|
+| 10.1 | No dependency has a known HIGH/CRITICAL vulnerability | **AUTOMATED** — the ecosystem's own scanner: `npm audit` for Node[^npmaudit], `pip-audit` for Python[^pipaudit], or equivalent, run before every commit that touches dependencies. | Zero HIGH/CRITICAL vulnerabilities reported (moderate/low are logged, not blocking). | Upgrade to the fixed version; if none exists, replace the dependency or escalate to the user. |
+| 10.2 | The lockfile (`package-lock.json`, `poetry.lock`, etc.) is committed, so installs are reproducible | **AUTOMATED** — a check that the lockfile exists and is tracked by git. | Check passes. | Commit the lockfile. |
+| 10.3 | A new dependency was actually necessary for this task, not a convenience pull for something a few lines of code would do | **HUMAN DECISION**, triggered whenever a new dependency is added — stated per `method.md`'s existing rule to explain any new package before installing it, not a new gate here. | Explained to Jeferson before install, per the global CLAUDE.md rule already in force. | n/a — the explain-before-install rule is already in force. |
 
 ---
 
