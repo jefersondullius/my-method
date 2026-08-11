@@ -79,4 +79,30 @@ honesta a origem da mudança. A proposta completa está em
 ver a entrada anterior sobre a cópia embutida no `start-project.md`)
 depois da aprovação explícita do usuário sobre o texto.
 
+### 2026-08-10 — origem da revisão v5 (wiring de segurança) — registro de proveniência
+
+Contexto: auditoria 03 (sessão 3 de 4) — avaliação da arquitetura de agentes
+para a parte de segurança do passo 12 do alvo. O que foi feito imediatamente
+antes: `notes/audit-03-agents.md` commitada, com veredito por um "terceiro
+desenho" (D1–D5) — a proposta de 4 agentes do usuário dobrada no esqueleto
+existente do método.
+
+Descoberta: o usuário aprovou o terceiro desenho e pediu a proposta escrita
+antes de aplicar. A revisão NÃO nasce de atrito de piloto: nasce da lacuna
+da auditoria 01 (matriz ligada a nada, rec 1) mais o desenho aprovado na
+auditoria 03 — segunda exceção consciente à regra "mudar só com friction
+concreta" (a primeira foi a v4/Step 1). Escopo da proposta: D1–D4 (coluna
+"Fix direction" na matriz; triagem de tier no planejamento; execução por
+tipo com revisor só-leitura `security-reviewer`; laço construtor-corrige /
+revisor-fresco-rejulga). D5 (hook de commit, rec 2 da audit-01) fica FORA —
+aprovação à parte, para não esconder o custo dele dentro desta.
+
+Por que importa: a proposta completa está em
+`notes/method-v5-security-proposal.md` e só vira `method.md` v5 (e espelhos)
+depois da aprovação explícita do usuário sobre o texto. Atenção à armadilha
+de duplicação já registrada: com a v5, `commands/start-project.md` passa a
+carregar TRÊS cópias embutidas (método, matriz, templates) — qualquer
+revisão futura da matriz ou do método precisa tocar o arquivo canônico E as
+cópias embutidas no mesmo commit.
+
 ## MINE
