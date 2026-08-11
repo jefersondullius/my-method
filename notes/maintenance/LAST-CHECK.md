@@ -70,14 +70,34 @@ needs its own approval and belongs to the first real run's proposal:
    footnote is not broken — but it now depends on that alias tracking
    the newest major, which npm does not promise anywhere.
 
-**NOT VERIFIED, carried to the next run:**
+**SETTLED by test T4, 2026-08-11** — moved here out of NOT VERIFIED:
 
-- Why the cached plugin copy reflects source edits made after
-  `installedAt` — the docs say plugins are copied to
-  `~/.claude/plugins/cache` and not used in place, yet edits landed
-  anyway. Undocumented; D-VER (version bump + inventory comparison)
-  exists because of it. **Test T4 in the proposal is designed to
-  settle this empirically and has not been run.**
+A seventh command file was added to `kit/my-method/commands/` with NO
+version bump and NO `/plugin update`, and a fresh session was asked
+for the inventory. It reported **Skills (7)**, including the new file.
+
+Conclusion: for this local-marketplace install at user scope, **the
+harness reads the kit source live** — the frozen-cache behaviour the
+docs describe does not govern component discovery here. Consequences,
+recorded so nobody re-derives them:
+
+- A version bump is **not** what delivers a change to a session.
+  D-VER's bump is kept as an honest record of which kit a session ran,
+  and as the fallback if the live-read behaviour ever changes to match
+  the documentation. `update-method`'s step 6 was corrected on
+  2026-08-11 to say this plainly, because its original wording claimed
+  the opposite.
+- The install record stays pinned: `claude plugin list --json` keeps
+  reporting `version: 0.1.0` and the `...\0.1.0` cache path, while
+  `claude plugin details` reports `0.2.0` and the current components.
+  **A difference between those two numbers is expected, not a
+  failure**, and the health check's probe 1 deliberately compares
+  component inventory rather than version strings.
+- Still undocumented, and therefore still not something to rely on:
+  no Anthropic page describes this live-read behaviour, so it can
+  change without notice. That is precisely what probe 1 watches for.
+
+**NOT VERIFIED, carried to the next run:**
 - Whether `claude plugin list --json`'s extra fields (`scope`,
   `installPath`, `installedAt`, `lastUpdated`, `errors`) are stable —
   observed live, not documented.

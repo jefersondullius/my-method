@@ -177,9 +177,19 @@ item, drop it and restate what remains before proceeding.
    and the `verify.ps1` skeleton. Any change to a canonical file above
    touches its embedded copy in the SAME commit.
 6. **`kit/my-method/.claude-plugin/plugin.json` — bump `version`.**
-   Version is the cache key the harness uses to decide whether an
-   update is available; a change applied without a bump relies on
-   undocumented behaviour to reach the installed copy.
+   Be clear about what this does and does not do. Test T4 on
+   2026-08-11 established that a new command file reaches a fresh
+   session WITHOUT a version bump and WITHOUT `/plugin update`: the
+   harness reads this kit's source live. The bump is therefore NOT
+   the delivery mechanism. It is kept for two reasons: it is the
+   honest record of which kit a given session ran, and it is the
+   documented mechanism the harness would fall back on if that
+   live-read behaviour ever changes to match the docs, which say
+   marketplace plugins are copied to a cache and used from there.
+   Note also that the install record stays pinned: `plugin list`
+   keeps reporting the version and cache path from the original
+   install, while `plugin details` reports the source. A difference
+   between those two numbers is expected and is not a failure.
 7. `notes/maintenance/WATCHLIST.md` — add a line for every new URL the
    changes introduce; remove lines for sources that died.
 8. `notes/maintenance/LAST-CHECK.md` — append this run's entry: date,

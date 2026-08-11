@@ -1,7 +1,28 @@
 # PROPOSAL — kit maintenance: `/my-method:health-check` + `/my-method:update-method`
 
-Status: **PROPOSED — nothing applied.** Written 2026-08-11 at the user's request
+Status: **approved and applied, 2026-08-11** ("Aprovado, com os onze itens como estão").
+Kept as the record of what was proposed. Written the same day at the user's request
 ("Quero implementar a manutenção do plugin … ESCREVA UMA PROPOSTA, SEM APLICAR").
+
+Outcome of the tests the user asked for (T1–T5, T8; T6–T7 deferred to a separate
+session by their decision) — full detail in `CHANGELOG.md`:
+
+- **All six PASSED.** T2 confirmed the design's most important negative: probe 3 reports
+  INCONCLUSIVE in an empty folder instead of claiming a pass. T8 confirmed the health
+  check can actually fail — with the agent renamed, probe 2 and probe 1 caught it
+  independently.
+- **T4 settled the open question this proposal was written around.** A seventh command
+  file, no version bump, no `/plugin update` — a fresh session reported Skills (7). The
+  harness reads this kit's source live; the documented frozen-cache behaviour does not
+  govern component discovery here. **D-VER's version bump is therefore not the delivery
+  mechanism**, only the record and the fallback, and `update-method.md`'s step 6 was
+  corrected the same day because its original wording claimed otherwise.
+- **Two numbers in this document are wrong and are left uncorrected on purpose**, so the
+  estimate and the measurement stay visible side by side: the standing token cost was
+  estimated at "roughly +100 tokens per session" and measured at **+186** (~271 → ~457);
+  and "Skills (6)" was the right expectation, but `claude plugin list` still reports
+  version 0.1.0 while `claude plugin details` reports 0.2.0 — expected, not a failure,
+  which is why probe 1 compares component inventory and never version strings.
 
 ---
 

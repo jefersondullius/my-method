@@ -1,5 +1,66 @@
 # CHANGELOG
 
+## 2026-08-11 — testes da manutenção: T1–T5 e T8 PASSARAM, T4 fechou uma dúvida antiga
+
+Seis testes da proposta, cada um em sessão nova headless com o plugin
+carregado pelo arnês real, em `--permission-mode bypassPermissions` (o
+modo mais permissivo que existe — se a trava nega mesmo assim, ela é
+de verdade). T6 e T7 (a primeira rodada real de manutenção) ficaram
+para uma sessão separada, por decisão do usuário.
+
+- **T1 — health check num projeto my-method de verdade: PASSOU nas
+  cinco sondas.** Inventário 6/1/1 conferido; `HEALTH: reviewer alive`;
+  e a sonda do hook voltou **a razão do gate**, não a saída do git
+  ("no verify evidence at .claude/last-verify.json") — a trava está
+  viva e nada foi commitado. Dependências: `git` 2.45.1 e `npm` 10.9.3
+  presentes, `semgrep`/`gitleaks`/`pip-audit` ausentes.
+- **T2 — pasta vazia: PASSOU.** A sonda 3 reportou **INCONCLUSIVO** e
+  se recusou a chamar isso de aprovação. Era o bug mais provável deste
+  tipo de comando (sonda que "passa" porque nada a negou) e está
+  fechado.
+- **T3 — dentro deste repositório: PASSOU.** A sonda 1 comparou contra
+  o kit em disco (6 arquivos de comando, 1 agente, 1 entrada de hook),
+  achou a junção residual `my-method@skills-dir`, e a sonda 5 rodou
+  `claude plugin validate` com `✔ Validation passed`.
+- **T4 — sonda de obsolescência forçada: RESOLVEU A DÚVIDA.** Um
+  sétimo comando descartável foi criado SEM bump de versão e SEM
+  `/plugin update`; a sessão nova reportou **Skills (7)**. Ou seja: o
+  arnês lê a fonte do kit AO VIVO — a "cópia congelada" que a
+  documentação descreve não governa a descoberta de componentes aqui.
+  **Consequência honesta: o bump de versão NÃO é o que entrega a
+  mudança**, e a frase que eu tinha escrito no `update-method.md`
+  dizendo o contrário foi corrigida no mesmo dia. O bump fica como
+  registro de qual kit rodou e como reserva se o comportamento mudar
+  para o que está documentado. Arquivo descartável removido.
+- **T5 — `/update-method` fora do repo: PASSOU.** Recusou, explicou por
+  quê, apontou o `/health-check` como alternativa, e criou **zero**
+  arquivos na pasta.
+- **T8 — negativo honesto: PASSOU.** Com o `security-reviewer.md`
+  renomeado, a sonda 2 falhou com "Agent type 'security-reviewer' not
+  found" — e a sonda 1, de forma independente, pegou o desencontro
+  (esperava 1 agente, achou 0) e mandou rodar `/plugin update`. Dois
+  detectores independentes para a mesma falha. Agente restaurado e
+  conferido logo em seguida.
+
+Duas correções de honestidade que os testes forçaram:
+
+1. **O custo em tokens que eu estimei estava baixo.** A proposta dizia
+   "~100 tokens a mais por sessão"; o real, medido por
+   `claude plugin details`, foi de ~271 para **~457** — **+186**, quase
+   o dobro do estimado (`health-check` ~70, `update-method` ~110).
+2. **`plugin list` e `plugin details` discordam da versão** — 0.1.0
+   contra 0.2.0 — porque o registro de instalação fica preso ao
+   original enquanto os detalhes leem a fonte. É esperado, não é falha,
+   e por isso a sonda 1 compara **inventário de componentes**, nunca
+   número de versão.
+
+Evento observado durante a aplicação, sem relação com o kit: o próprio
+Claude Code se auto-atualizou no meio da sessão (2.1.227 → **2.1.228**,
+binário substituído às 17:36), o que fez um `claude plugin validate`
+falhar uma vez com "não é reconhecido" e passar no retry. É a premissa
+do comando de manutenção se demonstrando sozinha: a pesquisa desta
+mesma sessão tinha registrado 2.1.227 como a última versão.
+
 ## 2026-08-11 — manutenção do kit: `/health-check` e `/update-method` (plugin 0.2.0)
 
 Aplicada a proposta `notes/proposals/maintenance-command-proposal.md`
