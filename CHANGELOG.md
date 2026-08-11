@@ -1,5 +1,59 @@
 # CHANGELOG
 
+## 2026-08-11 — method v7 aplicado: recomendação de modelo/esforço no início da tarefa (rec 3)
+
+Aplicada a proposta `notes/proposals/method-v7-model-effort-proposal.md`
+na ordem dela — o passo 10 do fluxo-alvo, o último ABSENT da audit-01,
+sai de ABSENT para L3 + L4. Esse é o teto estrutural: `/model` "can
+only be invoked by the user, not by the model itself"
+(code.claude.com/docs/en/commands.md, verificado ao vivo em
+2026-08-11); nem hook enxerga comandos embutidos.
+
+- `method.md` → **v7**: STEP 4 ganha a regra do silêncio — linha
+  `Model/effort: <modelo> + <esforço> — <razão>` dentro de "Does it
+  fit in one session?" SÓ quando um gatilho se aplica; ficha sem
+  linha = as configurações atuais servem; STEP 5a ganha a
+  interrupção única de início de tarefa (recusa = construir com o
+  atual e não insistir).
+- `start-project.md`: cópia embutida do método → v7 (checagem
+  mecânica pós-edição: método 223 linhas, matriz 204, esqueleto 31 —
+  0 divergências); Step 4 operacional ganha a lista de gatilhos
+  (UP: linhas REVIEW de `authentication`/`authorization`/`payments`;
+  2+ tarefas dependentes; lógica genuinamente nova; área que já
+  quebrou. DOWN: trabalho puramente mecânico).
+- `next-task.md`: (b) inclui a recomendação na MESMA interrupção
+  única das linhas HUMAN DECISION, com auto-checagem de esforço via
+  `${CLAUDE_EFFORT}` e fallback se o placeholder vier literal.
+- `templates/TASK-XXX.md`: comentário do campo com a linha opcional.
+
+Sonda P1 (sessão nova headless, projeto descartável com ficha
+carregando `Model/effort: opus + high — novel streaming-hash grouping
+logic`):
+
+1. **Turno 1 — PASSOU.** A interrupção única veio exata: introdução
+   da tarefa + "O card recomenda `/model opus` e `/effort high` —
+   razão: 'lógica nova de agrupamento por hash em streaming, sem
+   precedente neste repositório'. Pode configurar isso agora antes de
+   eu começar? Se preferir, eu sigo com as configurações atuais." —
+   e a sessão ESPEROU, sem construir nada.
+2. **Turno 2 (diagnóstico) — `${CLAUDE_EFFORT}` SUBSTITUIU de
+   verdade** no corpo do comando de plugin: a sessão citou o trecho
+   recebido — "The current effort level is `high`" — nível concreto,
+   não o texto literal. O caminho principal do D5 (calar quando o
+   esforço atual já é o recomendado) está operante; o fallback
+   textual permanece como segurança. O precedente de bug de expansão
+   (`${CLAUDE_PLUGIN_ROOT}` em `commands/*.md`, friction.md
+   2026-08-10) NÃO se aplicou a esta variável.
+
+Dívida de validação declarada: a REGRA DO SILÊNCIO e os gatilhos do
+planejamento (a metade que vive no `start-project`) só aparecem num
+fluxo completo de planejamento — serão observados no **piloto T2**
+(login + dado pessoal de terceiros). Com a v7, o piloto T2 acumula a
+validação pendente de: revisor de segurança em fluxo (v5), itens 2–4
+da rec 4 (marcador do SPEC, fechamentos crus, proxies), e agora regra
+do silêncio + gatilho UP da v7 (as fichas de autenticação dele devem
+nascer com linha `Model/effort:`).
+
 ## 2026-08-11 — rec 4 aplicada: captura da ideia, marcador do SPEC, fechamentos crus, proxies de tamanho
 
 Aplicada a proposta `notes/rec4-small-patches-proposal.md` — quatro

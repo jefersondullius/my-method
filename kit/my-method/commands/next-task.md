@@ -43,6 +43,20 @@ task is built (e.g. 3.2 auth library, 5.3 hosted checkout, 6.3 upload
 storage, 10.3 new dependency), ask it here, as part of this same
 single interruption — the row's question verbatim, in Portuguese.
 
+If the card carries a `Model/effort:` line, include it in this same
+single interruption: state the exact `/model` and `/effort` values to
+type and the card's one-line reason, and ask the user to set them
+now, before (c). The current effort level is `${CLAUDE_EFFORT}` — if
+the card's only recommendation is an effort level and it already
+matches, skip the ask entirely (if that placeholder shows literally
+instead of a level, treat the current effort as unknown and ask). One
+message carries the 6-line intro, this ask, and any build-shaping
+HUMAN DECISION question; then WAIT once. You cannot switch model or
+effort yourself; if the user declines or does not switch, build on
+the current settings and do not raise it again. If the card's
+recommendation is visibly wrong for what the card actually asks,
+adjust it here with one stated line of reasoning — never silently.
+
 ## c) Build
 
 Build exactly what the card describes under "What concretely exists

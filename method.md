@@ -1,16 +1,17 @@
-# METHOD — v6 (post-audit-03, D5)
+# METHOD — v7 (post-audit-01 rec 3)
 
-*Nota (pt-BR): sexta versão. Esta mudança é lastreada em friction
-observada — as notas 5c/5d registram verificação pulada/rotulada
-"humana" sem tentativa e arquivos de status dessincronizados nos
-pilotos — com desenho vindo da auditoria 01 (rec 2) e da auditoria 03
-(D5), aprovado pelo usuário em 2026-08-11. Mudanças da v6: 5c ganha o
-ponto de entrada de verificação (`scripts/verify.ps1`) que grava
-evidência de máquina (`.claude/last-verify.json`); 5d passa a ser
-travado por hook — commit sem evidência fresca de PASS, ou commit de
-tarefa sem os três arquivos de status + evidência juntos, é NEGADO
-deterministicamente. A v5 (wiring de segurança) permanece intacta.
-Nenhum outro passo mudou.*
+*Nota (pt-BR): sétima versão. Origem: rec 3 da auditoria 01 — o passo
+10 do fluxo-alvo (recomendação de modelo e esforço no início da
+tarefa), o único ainda ABSENT — a pedido explícito do usuário em
+2026-08-11. Terceira exceção consciente à regra de mudar só com
+friction de piloto; ocorrência registrada pela própria auditoria: a
+sessão da auditoria 01 começou em configurações herdadas até o
+usuário trocar à mão. Mudanças da v7: STEP 4 ganha a regra do
+silêncio (linha `Model/effort:` na ficha só quando a tarefa
+genuinamente precisa de algo diferente do padrão); STEP 5a ganha a
+única interrupção de início de tarefa para o usuário apertar os
+botões — o modelo não consegue trocar modelo/esforço sozinho
+(verificado ao vivo em 2026-08-11). Nenhum outro passo mudou.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -108,6 +109,14 @@ first becomes checkable. A card touching no surface states
 `STATE.md`'s settled decisions. This adds no sixth field and no
 second question — Gate 2 stays exactly one question.
 
+Model and effort — silence is the default: only when a task genuinely
+needs something different from the user's current settings, write one
+line inside its "Does it fit in one session?" field —
+`Model/effort: <model> + <effort> — <one-line reason>` — naming
+values the user can type with `/model` and `/effort`. A card with no
+such line means the current settings serve; never write a line to say
+the default is fine.
+
 Then ask exactly one question in Portuguese: "você reconhece o seu
 produto nesta lista?" — confirming the product being built, not the
 technical sequencing. **After this question is answered, end the turn
@@ -125,7 +134,12 @@ ponto de corte natural e não existia. Este passo fecha essa lacuna.*
 For each task:
 
 a) Tell the user in at most 6 lines which task this is and what will
-   exist when it ends.
+   exist when it ends. If the card carries a `Model/effort:` line,
+   state it in this same message — the exact values to type — and ask
+   the user to set them before building starts: one interruption, at
+   the start, never mid-task. Only the user can switch model or
+   effort; if they decline or do not switch, build on the current
+   settings and do not raise it again.
 b) Build it, narrating intent and consequence, never mechanics.
 c) VERIFY — not negotiable: **attempt automated verification first**;
    only say "verificação humana necessária" after a real attempt fails

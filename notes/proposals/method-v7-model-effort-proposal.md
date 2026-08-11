@@ -1,8 +1,15 @@
 # PROPOSAL — method.md v7, model/effort recommendation at task start (audit-01 rec 3 / target step 10)
 
-Status: **proposed, awaiting the user's approval of this text. Nothing applied.**
-Requested by the user on 2026-08-11 ("Quero desenvolver a rec 3 … escreva uma
-proposta, sem aplicar").
+Status: **approved and applied, 2026-08-11** ("Aprovado, os sete itens, com os
+gatilhos do D3 como estão"). Kept as the record of what was proposed. Probe P1
+PASSED both halves: the single-interruption ask appeared exactly (turn 1,
+waiting before build), and `${CLAUDE_EFFORT}` SUBSTITUTED for real in the
+plugin command body — the session quoted "The current effort level is `high`"
+(turn 2) — so D5's primary path is operative and the literal-placeholder
+fallback stays as dead-code safety. The planning half (silence rule +
+triggers) is declared validation debt for the T2 pilot; details in CHANGELOG.
+Originally requested by the user on 2026-08-11 ("Quero desenvolver a rec 3 …
+escreva uma proposta, sem aplicar").
 
 Provenance: WORKFLOW-TARGET step 10 ("At the START of the task, you recommend
 the model and effort level … One interruption, at the beginning, never

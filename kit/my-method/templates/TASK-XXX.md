@@ -19,7 +19,10 @@
 
 <!-- If not, split now. Proxies: one feature/slice; ~5 files max;
      at most 2 new entrypoint checks + 1 human check; at most 1 new
-     concept/library. Missing two or more = split. -->
+     concept/library. Missing two or more = split.
+     Optional, only when a start-project Step 4 trigger applies:
+     Model/effort: <model> + <effort> — <one-line reason>.
+     No line = the user's current settings serve. -->
 
 ## Status
 
