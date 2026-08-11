@@ -6,10 +6,12 @@ Text approval: granted by the user in session 3, 2026-08-10 ("Aprovo o texto —
 aplique na ordem da proposta"); design approval earlier the same session
 ("Aprovo o terceiro desenho"). One apply-time deviation, disclosed: the agent
 frontmatter gained `name: security-reviewer` (required for subagent
-registration; identical to the filename). Verify-at-apply (step 8) was
-attempted in-session and failed with "Agent type 'security-reviewer' not
-found" — plugin agents load at session start; the test is PENDING a fresh
-session, recorded as CHANGELOG caveat 1.
+registration; identical to the filename). Verify-at-apply (step 8): failed
+in-session ("Agent type not found" — plugin agents load at session start),
+then **PASSED in a fresh headless session on 2026-08-11**: the subagent's
+toolset was `Read, Grep, Glob` only; write and shell attempts NOT AVAILABLE;
+no file created. Read-only is structural, not prose. Full record: CHANGELOG
+entry of 2026-08-11.
 
 Provenance: audit-01 step-12 finding 1 + recommendation 1 (SECURITY-MATRIX wired to
 nothing) and the audit-03 verdict (`notes/audit-03-agents.md`, section e, D1–D5),
