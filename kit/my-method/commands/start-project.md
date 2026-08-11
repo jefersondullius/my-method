@@ -31,12 +31,14 @@ anything.
    for byte, so every project carries the same copy:
 
    ```markdown
-   # METHOD — v3 (post-retrospective)
+   # METHOD — v4 (post-audit-02)
 
-   *Nota (pt-BR): terceira versão, revisada depois de dois pilotos reais
-   (meu-organizador, depois calculo-investimento). Só mudou o que uma
-   entrada de friction concreta justificou — ver `friction.md` de cada
-   piloto. O resto do texto é idêntico às versões anteriores.*
+   *Nota (pt-BR): quarta versão. As três primeiras só mudaram o que uma
+   entrada de friction concreta justificou; a v4 abre uma exceção
+   consciente: o Step 1 foi revisado a partir de uma comparação deliberada
+   com a skill "grilling" (auditoria 02, 2026-08-10), por decisão do
+   usuário, com a proveniência registrada em friction.md. Nenhum outro
+   passo mudou.*
 
    ## STEP 0 — BEFORE ANYTHING
 
@@ -57,12 +59,42 @@ anything.
 
    ## STEP 1 — QUESTIONS
 
-   Ask about the project one question at a time, in Portuguese, each with
-   your own recommendation embedded so the user can just agree when they
-   have no opinion. Continue until no decision is open. Cover at least:
-   who uses it, whether it stores anyone's personal data, whether it
-   needs login, whether it needs to be online, what language its end
-   users read, and what "finished" means for this project.
+   Interview the user about the project in Portuguese, every question
+   carrying your own recommendation embedded so the user can just agree
+   when they have no opinion.
+
+   Open with the critical block, ONE question at a time, one message
+   each: does it run offline/local or online/hosted; does it need login;
+   does it involve payment; does it store other people's personal data.
+   Any question in these classes — money, other people's data,
+   access/login, hosting, legal exposure — is always asked alone,
+   whenever it comes up, even late in the interview.
+
+   After the critical block is settled, related questions MAY be grouped
+   in one message — small groups, answers separable one by one. Still
+   cover at least: who uses it, what language its end users read, and
+   what "finished" means for this project.
+
+   Three rules for the whole interview:
+   - Dependency order: never ask a question whose answer depends on an
+     answer not yet given.
+   - Facts vs decisions: anything researchable, research yourself; only
+     genuine decisions reach the user as questions.
+   - Silent assumptions: before closing, list anything you assumed
+     without asking, for the user to confirm or correct.
+
+   Continue until no decision is open.
+
+   *Nota (pt-BR): revisão v4 — única mudança desta versão. Origem:
+   comparação deliberada com a skill "grilling" (Matt Pocock), auditoria
+   02 (2026-08-10), por decisão explícita do usuário — NÃO nasceu de
+   atrito observado em piloto; proveniência registrada em friction.md.
+   Aditivos: ordem por dependência, fato≠decisão, suposições silenciosas.
+   Cadência: bloco crítico um-por-vez ("pagamento" entra na lista mínima
+   nesta versão), depois agrupamento autorizado, com a salvaguarda de que
+   classes críticas nunca entram em grupo. O modelo de "rodadas" do
+   grilling não foi adotado; o Gate 1 (SPEC escrito) segue sendo a
+   confirmação final.*
 
    ## STEP 2 — SPEC
 
@@ -177,27 +209,47 @@ the spec and plan exist.
 
 ## Step 1 — QUESTIONS (method.md Step 1)
 
-Ask about the project one question at a time, in Portuguese. Wait for
-the answer before asking the next one. Every question carries your own
-recommendation, so the user can just agree if they have no opinion —
-phrase it like "Pergunta: ... Minha recomendação: ... (pode só
-confirmar se topar)."
+Interview the user about the project in Portuguese. Every question
+carries your own recommendation, so the user can just agree if they
+have no opinion — phrase it like "Pergunta: ... Minha recomendação: ...
+(pode só confirmar se topar)."
 
-Cover, at minimum, one question each for:
-1. Quem usa isto (só você? outras pessoas? quantas, mais ou menos?).
-2. Se o projeto guarda dado pessoal de alguém (nome, e-mail, foto,
+Open with the CRITICAL BLOCK — one question at a time, one message
+each, wait for the answer before the next:
+1. Se precisa funcionar online/hospedado, ou se rodar só na máquina
+   do usuário já resolve.
+2. Se precisa de login/conta de usuário.
+3. Se envolve pagamento — cobrar, receber ou repassar qualquer
+   dinheiro de quem usa.
+4. Se o projeto guarda dado pessoal de terceiros (nome, e-mail, foto,
    localização, o que for) — e de quem.
-3. Se precisa de login/conta de usuário.
-4. Se precisa funcionar online, ou se rodar só na máquina do usuário
-   já resolve.
-5. Em que língua as pessoas que usam o produto vão ler a tela.
-6. O que significa "pronto" para este projeto especificamente — o que
+
+Any question in these classes — money, other people's data,
+access/login, hosting, legal exposure — is ALWAYS asked alone, in its
+own message, whenever it comes up, even late in the interview.
+
+After the critical block is settled, related questions MAY be grouped
+in one message — small groups, each question numbered and carrying its
+own recommendation, so the user can answer item by item. Cover, at
+minimum:
+5. Quem usa isto (só você? outras pessoas? quantas, mais ou menos?).
+6. Em que língua as pessoas que usam o produto vão ler a tela.
+7. O que significa "pronto" para este projeto especificamente — o que
    precisa existir para você considerar a primeira versão utilizável.
 
-If an answer opens a new decision not on this list, ask about it too,
-one at a time, before moving on. Stop asking once no decision is open
-— do not pad the list with questions that have an obvious answer given
-what was already said.
+Three rules for the whole interview:
+- Dependency order: never ask a question whose answer depends on an
+  answer not yet given.
+- Facts vs decisions: anything researchable, research yourself; only
+  genuine decisions reach the user as questions.
+- Silent assumptions: before closing, list in Portuguese anything you
+  assumed without asking, one line each, for the user to confirm or
+  correct.
+
+If an answer opens a new decision not on this list, ask about it too —
+alone if it touches a critical class, grouped otherwise. Stop asking
+once no decision is open — do not pad the list with questions that
+have an obvious answer given what was already said.
 
 ## Step 2 — SPEC (method.md Step 2) — GATE 1
 

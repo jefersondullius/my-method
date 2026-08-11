@@ -42,3 +42,23 @@ For each step, state exactly one of:
   Level 4 EVIDENTIAL (machine-verifiable done, one commit per task): does not prevent failure, makes it visible after.
 
 For each step, recommend the cheapest level that is good enough, state its cost, and say plainly what breaks one level lower.
+
+=== AMENDMENT — 2026-08-10, recorded in audit session 2 of 4 ===
+
+The sections above stay verbatim, per this file's own rule. This amendment records an
+owner-approved change to the contract (decision trail: notes/audit-02-skills.md addendum,
+notes/method-v4-step1-proposal.md, friction.md provenance entry of 2026-08-10):
+
+Step 4's cadence is revised by method.md v4 STEP 1. The interrogation now opens with a
+critical block asked ONE question at a time, one message each — offline/local vs
+online/hosted, login, payment (new minimum topic in v4), other people's personal data —
+and any question in the critical classes (money, other people's data, access/login,
+hosting, legal exposure) is always asked alone, whenever it comes up, even late in the
+interview. After the critical block is settled, related non-critical questions may be
+grouped in one message, answers separable one by one. Dependency ordering, the
+facts-vs-decisions split (researchable facts are researched, never asked), and a closing
+silent-assumptions list apply to the whole interview.
+
+Audit sessions 3 and 4 evaluate step 4 against method.md v4 STEP 1 plus this amendment,
+not against the original "ONE question at a time" wording above. Every other step of the
+contract is unchanged.

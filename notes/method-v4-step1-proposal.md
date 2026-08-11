@@ -1,8 +1,8 @@
-# PROPOSAL — method.md v4, STEP 1 revision (NOT applied)
+# PROPOSAL — method.md v4, STEP 1 revision (applied 2026-08-10)
 
-Status: **proposal only. method.md is untouched.** The user approves this text before any
-mirroring happens.
-Approval: pending.
+Status: **approved and applied, 2026-08-10.** Kept as the record of what was proposed;
+`method.md` now carries v4 and the mirrors are done (see git history).
+Approval: granted by the user in session 2, 2026-08-10.
 
 Provenance: derived from a deliberate technique comparison with the `grilling` skill
 (Matt Pocock), audit session 2, 2026-08-10 — NOT from observed pilot friction. Decision

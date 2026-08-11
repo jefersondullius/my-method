@@ -1,9 +1,11 @@
-# METHOD — v3 (post-retrospective)
+# METHOD — v4 (post-audit-02)
 
-*Nota (pt-BR): terceira versão, revisada depois de dois pilotos reais
-(meu-organizador, depois calculo-investimento). Só mudou o que uma
-entrada de friction concreta justificou — ver `friction.md` de cada
-piloto. O resto do texto é idêntico às versões anteriores.*
+*Nota (pt-BR): quarta versão. As três primeiras só mudaram o que uma
+entrada de friction concreta justificou; a v4 abre uma exceção
+consciente: o Step 1 foi revisado a partir de uma comparação deliberada
+com a skill "grilling" (auditoria 02, 2026-08-10), por decisão do
+usuário, com a proveniência registrada em friction.md. Nenhum outro
+passo mudou.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -24,12 +26,42 @@ pedir o texto de volta ao usuário. Passo 0.1 fecha essa lacuna.*
 
 ## STEP 1 — QUESTIONS
 
-Ask about the project one question at a time, in Portuguese, each with
-your own recommendation embedded so the user can just agree when they
-have no opinion. Continue until no decision is open. Cover at least:
-who uses it, whether it stores anyone's personal data, whether it
-needs login, whether it needs to be online, what language its end
-users read, and what "finished" means for this project.
+Interview the user about the project in Portuguese, every question
+carrying your own recommendation embedded so the user can just agree
+when they have no opinion.
+
+Open with the critical block, ONE question at a time, one message
+each: does it run offline/local or online/hosted; does it need login;
+does it involve payment; does it store other people's personal data.
+Any question in these classes — money, other people's data,
+access/login, hosting, legal exposure — is always asked alone,
+whenever it comes up, even late in the interview.
+
+After the critical block is settled, related questions MAY be grouped
+in one message — small groups, answers separable one by one. Still
+cover at least: who uses it, what language its end users read, and
+what "finished" means for this project.
+
+Three rules for the whole interview:
+- Dependency order: never ask a question whose answer depends on an
+  answer not yet given.
+- Facts vs decisions: anything researchable, research yourself; only
+  genuine decisions reach the user as questions.
+- Silent assumptions: before closing, list anything you assumed
+  without asking, for the user to confirm or correct.
+
+Continue until no decision is open.
+
+*Nota (pt-BR): revisão v4 — única mudança desta versão. Origem:
+comparação deliberada com a skill "grilling" (Matt Pocock), auditoria
+02 (2026-08-10), por decisão explícita do usuário — NÃO nasceu de
+atrito observado em piloto; proveniência registrada em friction.md.
+Aditivos: ordem por dependência, fato≠decisão, suposições silenciosas.
+Cadência: bloco crítico um-por-vez ("pagamento" entra na lista mínima
+nesta versão), depois agrupamento autorizado, com a salvaguarda de que
+classes críticas nunca entram em grupo. O modelo de "rodadas" do
+grilling não foi adotado; o Gate 1 (SPEC escrito) segue sendo a
+confirmação final.*
 
 ## STEP 2 — SPEC
 
