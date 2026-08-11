@@ -21,7 +21,7 @@
 
 ## Settled decisions
 
-<!-- Decisions not to reopen without new information. Always includes: Security tier: TX — reason (from Step 4 triage). -->
+<!-- Decisions not to reopen without new information. Always includes: SPEC approved: YYYY-MM-DD; Security tier: TX — reason (from Step 4 triage). -->
 
 ## Open questions
 

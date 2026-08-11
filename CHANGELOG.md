@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## 2026-08-11 — rec 4 aplicada: captura da ideia, marcador do SPEC, fechamentos crus, proxies de tamanho
+
+Aplicada a proposta `notes/rec4-small-patches-proposal.md` — quatro
+remendos L3/L4 em comandos e templates; `method.md` e as cópias
+embutidas (método, matriz, esqueleto) intocados, sem bump de versão:
+
+- `start-project.md`: `argument-hint: <ideia em 1-2 frases>` no
+  frontmatter; Step 1 pergunta a ideia ANTES do bloco crítico quando
+  ela não veio com o comando, com proibição explícita de inferir da
+  pasta (a friction do piloto de 2026-08-11); Step 2 grava
+  `Approved: <data>` no fim do `SPEC.md` na confirmação do Gate 1
+  (append-only, nunca edita linha anterior); Step 4 ganha os quatro
+  proxies de tamanho com a regra errou-dois-divide; o template do
+  STATE ganha a aprovação do SPEC nas settled decisions; Step 6
+  mostra `git show --stat` cru do commit inicial antes do texto
+  literal de fechamento.
+- `next-task.md`: (e) ganha o `git show --stat` cru do commit da
+  tarefa antes do texto literal de fim de turno — o texto literal
+  segue intacto e por último.
+- Templates: `TASK-XXX.md` (comentário com os proxies) e `STATE.md`
+  (linha da aprovação do SPEC).
+
+Sondas vivas do item 1 (o único friction-backed), um turno cada,
+sessões headless novas em pastas descartáveis:
+
+- **SEM ideia**: a primeira mensagem foi exatamente pedir a ideia
+  ("Qual é a ideia? Uma ou duas frases bastam.") — sem bloco crítico,
+  sem adivinhar do nome da pasta. **PASSOU.** Observação menor,
+  registrada sem correção: essa sessão perguntou ANTES de gravar os
+  arquivos do Step 0 (a ordem do comando é Step 0 primeiro) — desvio
+  de sequência sem dano prático (os arquivos viriam no turno
+  seguinte; a sonda foi abortada no turno 1). Vira friction se
+  recorrer em uso real.
+- **COM ideia** ("uma lista de compras local"): Step 0 gravado, ideia
+  reformulada em uma linha e pergunta crítica 1 aberta na mesma
+  mensagem (com um convite extra a detalhar a ideia — inofensivo).
+  **PASSOU.**
+
+Dívida de validação declarada (itens 2–4): o marcador do SPEC, os
+fechamentos com stat cru e os proxies só aparecem num fluxo completo —
+observar no próximo piloto real (o piloto T2 pendente, que também é o
+que falta para exercitar o revisor dentro do fluxo).
+
 ## 2026-08-11 — piloto v5+v6 de ponta a ponta: PASSOU (contador de cliques, T0)
 
 Primeiro fluxo completo com o kit v5+v6 de verdade: sessões headless

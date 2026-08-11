@@ -1,5 +1,6 @@
 ---
 description: Start a brand-new project from an empty folder — questions, spec, stack, plan, and the first commit, all in one session. The entry point that runs before the first line of code.
+argument-hint: <ideia em 1-2 frases>
 disable-model-invocation: true
 ---
 
@@ -478,6 +479,12 @@ carries your own recommendation, so the user can just agree if they
 have no opinion — phrase it like "Pergunta: ... Minha recomendação: ...
 (pode só confirmar se topar)."
 
+Before any question: if the user typed the idea together with the
+command, restate it in one line and go straight to the critical
+block. If not, ask for it first — one line, in Portuguese ("Qual é a
+ideia? Uma ou duas frases bastam.") — and WAIT for the answer. Never
+infer the idea from the folder name or any other context: ask.
+
 Open with the CRITICAL BLOCK — one question at a time, one message
 each, wait for the answer before the next:
 1. Se precisa funcionar online/hospedado, ou se rodar só na máquina
@@ -560,6 +567,11 @@ language, and WAIT. This is a real gate: do not proceed to Step 3
 until the user explicitly confirms the spec is right. If they ask for
 changes, edit `SPEC.md` and summarize again — repeat until confirmed.
 
+On the confirmation, append one line to the end of `SPEC.md`:
+`Approved: <YYYY-MM-DD>` (today's date). If the spec is ever revised
+and re-approved, append a new `Approved:` line — never edit or remove
+an earlier one.
+
 ## Step 3 — STACK (method.md Step 3)
 
 Decide the stack yourself — do not ask the user to choose between
@@ -622,6 +634,12 @@ Break the work into tasks and write:
 If any task would not fit in a single session, split it into more
 tasks now, at planning time — do not defer the split to when
 `/next-task` reaches it.
+
+Sizing proxies for "Does it fit in one session?": (a) one feature or
+one slice of a feature; (b) touches at most ~5 files; (c) verification
+adds at most 2 new checks to the entrypoint plus at most 1 human
+check; (d) introduces at most 1 new concept or library. A task that
+misses two or more proxies is split now.
 
 Then ask exactly this one question, in Portuguese, and nothing else:
 
@@ -737,7 +755,7 @@ Only after Gate 2 is confirmed:
 
    ## Settled decisions
 
-   <Key answers from Step 1, the SPEC/stack decisions from Steps 2-3, and the security tier — "Security tier: TX — <reason>" — from Step 4's triage.>
+   <Key answers from Step 1, the SPEC approval — "SPEC approved: <YYYY-MM-DD>" — the stack decision from Step 3, and the security tier — "Security tier: TX — <reason>" — from Step 4's triage.>
 
    ## Open questions
 
@@ -807,6 +825,11 @@ Only after Gate 2 is confirmed:
 
 Tell the user, in Portuguese, in a few lines: the project was
 initialized, how many tasks are in the plan, and what TASK-001 is.
+
+Run `git show --stat` on the initial commit and show its RAW output
+on screen — the user sees the commit and its file list directly, not
+a sentence about them.
+
 Then say, and mean literally:
 
 > Rode `/clear` agora. Na próxima sessão, digite `/next-task` para

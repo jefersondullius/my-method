@@ -1,7 +1,12 @@
 # PROPOSAL — audit-01 rec 4: four small L3/L4 patches (commands and templates only)
 
-Status: **proposed, awaiting the user's approval of this text. Nothing applied.**
-Requested by the user on 2026-08-11 ("Escreva a proposta da rec 4 antes de aplicar").
+Status: **approved and applied, 2026-08-11** ("aprovado"). Kept as the record
+of what was proposed. Item-1 live probes both PASSED (no-idea run asked for
+the idea first, with a minor Step-0 sequencing observation; with-idea run
+restated and opened critical question 1) — details in CHANGELOG. Items 2–4
+are declared validation debt until the next full pilot (T2). Originally
+requested by the user on 2026-08-11 ("Escreva a proposta da rec 4 antes de
+aplicar").
 
 Provenance, item by item — this bundle is audit-01's recommendation 4 verbatim
 ("idea-capture + argument-hint (step 3); approval marker in SPEC.md at Gate 1

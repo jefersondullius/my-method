@@ -17,7 +17,9 @@
 
 ## Does it fit in one session?
 
-<!-- If not, split now. -->
+<!-- If not, split now. Proxies: one feature/slice; ~5 files max;
+     at most 2 new entrypoint checks + 1 human check; at most 1 new
+     concept/library. Missing two or more = split. -->
 
 ## Status
 

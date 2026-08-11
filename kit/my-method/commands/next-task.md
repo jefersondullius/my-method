@@ -106,7 +106,10 @@ Only after every check in (d) passes:
 2. Commit all changed files together, in English — including
    `.claude/last-verify.json`: the commit gate requires it staged with
    the three status files, and denies the commit otherwise.
-3. End the turn with exactly this text and nothing else:
+3. Run `git show --stat` on the task commit and show its RAW output
+   on screen — the user sees directly that the card, `PLAN.md`,
+   `STATE.md` and the verify evidence are all in the commit.
+4. End the turn with exactly this text and nothing else:
 
    > Tarefa concluída e commitada. Rode `/clear` antes de continuar.
 
