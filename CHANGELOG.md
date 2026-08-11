@@ -1,5 +1,66 @@
 # CHANGELOG
 
+## 2026-08-11 — manutenção do kit: `/health-check` e `/update-method` (plugin 0.2.0)
+
+Aplicada a proposta `notes/proposals/maintenance-command-proposal.md`
+na ordem dela, com os onze itens aprovados como estavam. `method.md`
+NÃO foi tocado e não teve bump de versão — isto é ferramental do kit,
+como a rec 4 foi; o método descreve como construir um produto, não
+como manter o próprio plugin. As quatro cópias embutidas no
+`start-project.md` também não mudaram, então a conferência byte a byte
+não se aplica a esta aplicação.
+
+- NOVO `kit/my-method/commands/health-check.md`: cinco sondas em
+  segundos, só leitura — (1) inventário e instalação via
+  `claude plugin list --json` + `claude plugin details`, comparados
+  contra o kit em disco ou contra a linha literal do próprio comando;
+  (2) o `security-reviewer` registra; (3) a trava de commit dispara,
+  provada por `git commit --dry-run` ser NEGADO; (4) dependências
+  presentes/ausentes, sem nunca instalar; (5) `claude plugin validate`
+  dentro do repo do método. Regra central: sonda inconclusiva nunca
+  vira "passou".
+- NOVO `kit/my-method/commands/update-method.md`: dois modos. Sem
+  argumento pesquisa cinco eixos por subagentes (práticas da
+  Anthropic, vulnerabilidades, skills/agentes, modelos/mecanismos, e a
+  varredura aberta), escreve proposta em `notes/proposals/` e PARA com
+  instrução de `/clear`. Com `apply`, aplica uma proposta já aprovada.
+  Só roda dentro deste repositório — ele edita o kit, e a regra de
+  Boundaries proíbe alcançar fora da pasta atual.
+- `kit/my-method/.claude-plugin/plugin.json`: **0.1.0 → 0.2.0**. Este
+  bump é a decisão D-VER e existe por um achado desta sessão: a
+  documentação diz que instalação por marketplace é cópia congelada em
+  `~/.claude/plugins/cache`, o carimbo da instalação é 2026-08-10T05:17Z,
+  e mesmo assim o agente (10/08 23:46) e o hook (11/08 00:18) — ambos
+  posteriores — aparecem carregados. O kit vinha dependendo de
+  comportamento não documentado a cada aplicação, sem aviso no dia em
+  que parasse. Agora a versão é bumpada em toda aplicação e a health
+  check compara o inventário do arnês contra o kit em disco.
+- NOVOS `notes/maintenance/WATCHLIST.md` (o que verificar: URL +
+  **receita de reverificação** por fonte) e
+  `notes/maintenance/LAST-CHECK.md` (livro-caixa: data por eixo, o que
+  foi aplicado, rejeitado e NÃO VERIFICADO). A receita existe porque
+  três fontes do próprio repo devolvem HTTP 200 sem conteúdo útil —
+  `owasp.org/Top10/` (casca de redirect), `docs.npmjs.com/cli/audit`
+  (stub de 77 bytes) e `semgrep.dev/p/owasp-top-ten` (shell JS vazio).
+- `README.md`: os dois comandos novos e uma seção de manutenção.
+- `friction.md`: registro de proveniência (commitado junto da
+  proposta, `f5606ee`), incluindo que a auditoria 04 citada no pedido
+  NÃO existe neste repositório — o pedido do usuário é que serve de
+  diagnóstico, e a proposta declara isso.
+
+Achados da pesquisa que NÃO foram aplicados (são descobertas, não
+mudanças; cada uma precisa da própria aprovação, na primeira rodada
+real): `gitleaks` está CONGELADO pelo mantenedor ("security patches
+only", sucessor Betterleaks) e a matriz depende dele em duas linhas; a
+lista OWASP 2025 tem duas categorias sem cobertura nenhuma aqui (A03
+cadeia de suprimentos ampliada, A10 tratamento de exceções); o Fable 5
+cai automaticamente para outro modelo em prompts marcados como de
+cibersegurança, bem onde o gatilho UP da v7 manda escalar; e a URL
+canônica do `npm audit` mudou de prateleira. Todos registrados no
+livro-caixa.
+
+Testes: registrados em entrada própria, acima desta.
+
 ## 2026-08-11 — method v7 aplicado: recomendação de modelo/esforço no início da tarefa (rec 3)
 
 Aplicada a proposta `notes/proposals/method-v7-model-effort-proposal.md`

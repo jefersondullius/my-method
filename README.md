@@ -81,8 +81,30 @@ Comandos disponíveis:
   (tarefa atual, decisões já fechadas, próximo passo). Não muda nada.
 - `/my-method:friction` — registra, verbatim, uma reclamação sobre
   como o trabalho está sendo conduzido.
+- `/my-method:health-check` — checagem instantânea, antes de começar
+  um projeto: o plugin certo está carregado e atualizado, os comandos
+  resolvem, o revisor de segurança registra, a trava de commit
+  dispara, as ferramentas de segurança existem. Só reporta — não
+  conserta e não instala nada.
+- `/my-method:update-method` — manutenção completa do método e do
+  plugin: reverifica documentação da Anthropic, fontes de
+  vulnerabilidade, skills e agentes instalados, modelos e níveis de
+  esforço, e faz uma varredura aberta do que existe hoje que tornaria
+  parte do método obsoleta. Escreve uma proposta; não muda nada sem a
+  sua aprovação. Só roda dentro do repositório do método.
 
-Todos os quatro só funcionam sendo **digitados diretamente** — cada um
+Todos os seis só funcionam sendo **digitados diretamente** — cada um
 tem `disable-model-invocation: true` no seu arquivo, então o Claude
 não pode disparar nenhum sozinho a partir de um pedido em linguagem
 natural.
+
+## Manutenção
+
+`notes/maintenance/WATCHLIST.md` guarda **o que** cada rodada de
+manutenção verifica — URL e receita de reverificação por fonte.
+`notes/maintenance/LAST-CHECK.md` é o livro-caixa: a data da última
+verificação **por eixo**, o que foi aplicado, o que foi rejeitado e o
+que ficou NÃO VERIFICADO. A health check reporta a idade da última
+manutenção a partir de uma linha literal dentro do próprio comando,
+reescrita a cada aplicação — é assim que ela sabe a data mesmo rodando
+dentro de outro projeto, onde não pode ler este repositório.
