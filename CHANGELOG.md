@@ -1,5 +1,62 @@
 # CHANGELOG
 
+## 2026-08-11 — piloto v5+v6 de ponta a ponta: PASSOU (contador de cliques, T0)
+
+Primeiro fluxo completo com o kit v5+v6 de verdade: sessões headless
+NOVAS (comandos, agente e hook carregados pelo harness real), uma
+para `/start-project` — com o dono do produto simulado respondendo
+turno a turno via `--resume` — e outra sessão limpa para
+`/next-task`, imitando o `/clear`. Projeto descartável no scratchpad
+(contador de cliques com nome personalizável; stack decidida pela
+sessão: PowerShell + WinForms, zero instalação).
+
+O que funcionou, com evidência no git do piloto:
+
+- **Step 0 v6**: `method.md` v6 (209 linhas), `SECURITY-MATRIX.md`
+  (204) e `friction.md` gravados no projeto novo.
+- **Entrevista v4**: bloco crítico um-a-um (4 perguntas),
+  agrupamento das demais, lista de suposições silenciosas, Gate 1 e
+  Gate 2 travando e esperando resposta.
+- **Triagem v5**: "Security tier: T0 — razão" nas settled decisions
+  do `STATE.md`; ficha com "Security: none applicable" JUSTIFICADO
+  linha a linha (nome digitado vai para rótulo WinForms, não para
+  HTML/SQL/shell; sem dependência externa; sem segredo) — a
+  proporcionalidade da matriz funcionando: linha fora de escopo é
+  pulada, não falhada.
+- **Scaffold v6**: `scripts/verify.ps1` no primeiro commit
+  (`549dc17`, 9 arquivos, staged set correto); o primeiro commit
+  passou pelo gate pela isenção de repositório sem commits
+  (decisão 7, confirmada ao vivo).
+- **Execução v6**: a sessão criou `check-syntax.ps1` e
+  `check-roundtrip.ps1`, adicionou os dois ao `$checks`, rodou o
+  entrypoint, e SÓ fechou a tarefa depois da confirmação humana;
+  commit da tarefa (`99430a9`) com o staged set EXATO que o gate
+  exige: app + `STATE.md` + `PLAN.md` + ficha + evidência
+  (`pass: true`, `head` = commit pai, 2 checagens exit 0). Ficha,
+  PLAN e STATE sincronizados no MESMO commit — a falha 5d dos
+  pilotos antigos não recorreu. Texto literal de fim de turno
+  emitido, e nada mais.
+
+Limites deste piloto, declarados:
+
+1. Linhas REVIEW não dispararam — CORRETAMENTE (T0 sem linha
+   aplicável), mas isso significa que o caminho revisor-em-fluxo
+   segue não exercitado; exige um piloto T2 (login + dado pessoal).
+   O revisor em si foi testado à parte (entrada de 2026-08-11).
+2. A checagem HUMANA foi confirmada pela persona simulada, não por
+   um humano clicando — o app não foi testado em GUI de verdade (as
+   duas checagens automatizadas rodaram de verdade, exit 0).
+3. Condução headless (`-p`) mostra só a mensagem final de cada
+   turno: a narração da stack e a saída bruta do verify ficaram
+   invisíveis para o condutor — limitação do arnês de teste, não do
+   método; a evidência commitada compensa (é para isso que o L4
+   existe).
+4. Friction observada AO VIVO e registrada em `friction.md`: a
+   entrevista começou sem pedir a ideia (deduziu do nome da pasta) —
+   a lacuna do passo 3 que a audit-01 marcou PARTIAL, agora com
+   ocorrência de piloto; correção barata candidata é a rec 4 da
+   audit-01 (`argument-hint` + uma linha no comando).
+
 ## 2026-08-11 — teste de integração da trava de commit: PASSOU em sessão nova
 
 Fecha o passo 7 da aplicação da v6 (entrada abaixo). Sessão nova

@@ -132,4 +132,25 @@ verificação RODOU e PASSOU há pouco; se as checagens são as CERTAS continua
 sendo julgamento (L3), e evidência forjada de propósito é mentira visível
 no git (L4), não impossível.
 
+### 2026-08-11 — piloto contador: entrevista começou sem pedir a ideia
+
+Contexto: piloto de ponta a ponta v5+v6 (contador de cliques, projeto
+descartável no scratchpad), sessões headless conduzidas durante a sessão 3
+da auditoria. O que foi feito imediatamente antes: `/my-method:start-project`
+disparado numa pasta vazia, sem a ideia junto do comando.
+
+Descoberta: o Step 1 abriu a primeira pergunta crítica ANTES de saber qual
+era a ideia — e recomendou "local" deduzindo do NOME DA PASTA
+("pilot-v6-contador"). A ideia só entrou porque a persona a ofereceu junto
+com a primeira resposta. É exatamente a lacuna do passo 3 do alvo que a
+audit-01 marcou PARTIAL ("interrogation starts blind") — agora com
+ocorrência observada em piloto, não só em análise.
+
+Por que importa: a correção barata já está especificada na audit-01 (rec 4):
+`argument-hint` no frontmatter de `start-project.md` + uma linha no início
+do Step 1 do comando ("se a ideia não veio com o comando, pergunte em uma
+linha antes do bloco crítico"). É mudança de comando, não de `method.md` —
+o método já diz o que perguntar; é o comando que começa cego. Aplicar só
+com aprovação explícita, como sempre.
+
 ## MINE
