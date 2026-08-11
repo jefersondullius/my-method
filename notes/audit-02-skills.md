@@ -242,3 +242,90 @@ Rejected, no trigger can rehabilitate them (the reason is structural, not qualit
   needed for this verdict (nothing is being installed); must be verified before any future install.
 - Size in tokens of superpowers' per-session hook injection (full `using-superpowers` body; not measured).
 - Karpathy's original X post (fetch blocked, HTTP 402); secondary corroboration only.
+
+---
+
+## Addendum (same session) — grilling (Matt Pocock)
+
+Added after the main evaluation at the user's request, under an explicit decision procedure:
+apply the exact mechanism test that rejected superpowers' brainstorming; if it fails any
+prong, reject; if it passes, do NOT install either — extract the technique and state
+concretely what it adds over `start-project.md` Step 1, for the user to decide on folding
+into the method's own text at zero permanent cost. Live evidence with per-claim citations:
+`notes/research-skills/grilling.md`.
+
+### Facts
+
+EXISTS under exactly this name: skill `grilling` in `github.com/mattpocock/skills`, author
+confirmed Matt Pocock (aihero.dev / Total TypeScript). In the official marketplace as the
+25-skill bundle `mattpocock-skills` (pinned sha current with upstream HEAD). Actively
+maintained — grilling itself was reworked 2026-07-16 and polished through 2026-07-31; repo
+pushed 2026-08-07. Two user-typed front doors wrap it: `grill-me` (writes nothing) and
+`grill-with-docs` (writes CONTEXT.md + ADRs). No verified way to install `grilling` alone
+through `/plugin`. [research-skills/grilling.md, all accessed 2026-08-10]
+
+### Mechanism test (the superpowers test, verbatim prongs)
+
+- M1 always-on injection/hook: **NO** — zero hooks in the full 240-entry repo tree; no
+  `hooks` key in plugin.json; ordinary name+description preload only.
+- M2 own artifact competing with SPEC.md: **NO** for `grilling`/`grill-me` — primary source:
+  "It is stateless. It writes no files and leaves no workspace behind." (**YES** for the
+  sibling `grill-with-docs`: CONTEXT.md + ADRs — that sibling would compete with SPEC.md and
+  STATE.md, and it rides along in the only Claude Code install route.)
+- M3 "you MUST" authority framing: **NONE FOUND** — strongest line is process-internal
+  ("Decisions are yours, and it must wait for them"), not adoption-forcing.
+
+Verdict on mechanism: `grilling` itself PASSES — it is question heuristics, not a competing
+protocol. Unlike superpowers there is no forced every-session presence and no artifact of its
+own. Install verdict is still NO, per the user's own procedure and two cost facts: the only
+`/plugin` route ships 25 skills (24 unwanted descriptions in every session, including the
+M2-failing `grill-with-docs`), and `grilling` is model-invocable ("Grill the user relentlessly
+about a plan, decision, or idea") — description-adjacent to Step 1's territory, so installed
+it could be auto-selected during `/my-method:start-project` and its round-based cadence would
+sit beside Step 1's one-at-a-time rule (an L3-vs-L3 conflict the method would have to win by prose).
+
+### Technique delta vs `start-project.md` Step 1 (read from the primary sources)
+
+Step 1 today: one question at a time, wait; recommendation embedded ("pode só confirmar se
+topar"); six minimum topics; follow-up rule for newly opened decisions; stop when no decision
+is open, no padding.
+
+What grilling has that Step 1 does not — fold-in candidates, zero permanent cost:
+- **D1 — dependency ordering.** Grilling never asks a question that depends on an unanswered
+  one ("two questions never share a round if one depends on the other's answer"; ask only the
+  settled-prerequisite frontier). Step 1 has NO ordering rule at all. Foldable as one line:
+  ask next the question that unlocks the most; never ask what depends on an answer not yet given.
+- **D2 — facts vs decisions split.** "Finding facts is your job, never the user's" — research
+  what is researchable; only genuine decisions reach the user. Step 1's "don't pad with
+  obvious questions" gestures here but never says look-it-up-yourself. For a non-programmer
+  user this is the sharpest delta: it structurally prevents questions he cannot answer.
+- **D3 — surface silent assumptions.** Grilling's stop is "frontier empty... nothing silently
+  assumed"; Step 1's stop ("no decision open") never forces the model to list assumptions it
+  made without asking. Foldable as: before closing Step 1, state any assumption made along
+  the way and convert each into a question or an explicit confirmation.
+
+What grilling has that must NOT be folded (would alter the target):
+- **Rounds/batching.** Since 2026-07-16 grilling asks the whole frontier per round — multiple
+  questions at once. WORKFLOW-TARGET step 4 mandates ONE question at a time. Adopt D1's
+  ordering, never the batching.
+- **Second confirmation gate ("shared understanding").** The method already has a stronger
+  version: Gate 1 confirms a written SPEC.md summary, not a feeling. No addition needed.
+- Note also: grilling's docs treat easy serial agreement ("agreed, agreed, agreed") as a
+  user-side failure mode; the method deliberately designs FOR easy agreement (embedded
+  recommendations exist so the user can just agree). Philosophical difference, flagged, not adopted.
+- Its question format (❓/➡️ blocks) adds nothing — Step 1's phrasing already avoids a
+  format bug grilling's own docs admit (recommendation sometimes contradicting the question's wording).
+
+### Recommendation (unchanged install verdict; new fold-in decision for the user)
+
+Install: NOTHING — unchanged. If D1–D3 are wanted, the route is a method.md v4 revision of
+Step 1 first, then mirroring in `start-project.md` Step 1 AND the method copy embedded in it
+(the duplication trap friction.md documents). Cost: a few lines of prose in files that load
+only when the command runs — zero standing context. Honesty per the method's own rule: no
+friction entry yet names bad question order, fact-questions, or silent assumptions; the
+observable trigger on record is this audit's own comparison, requested explicitly by the
+user — whether that counts as sufficient trigger is the user's call, not this audit's.
+
+Addendum NOT VERIFIED: grilling's 212,551-star figure is the raw GitHub API value, unusually
+high and uncorroborated (aggregator-site install counts were excluded as unverifiable); no
+non-interactive solo-install command for `grilling` via `npx skills` is documented.
