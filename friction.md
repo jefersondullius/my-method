@@ -206,4 +206,55 @@ Regra central do desenho, vinda do documento original do método: o
 SILÊNCIO é o padrão — linha `Model/effort:` na ficha só quando um gatilho
 se aplica; ficha sem linha significa que as configurações atuais servem.
 
+### 2026-08-11 — proposta da manutenção do kit (health-check + update-method) — registro de proveniência
+
+Contexto: sessão seguinte à aplicação da v7. O que foi feito imediatamente
+antes: o usuário pediu, por escrito e sem aplicar, a proposta de um comando de
+manutenção do plugin — reverificação de práticas da Anthropic, vulnerabilidades,
+skills/agentes, modelos, mais uma varredura aberta — com uma health check
+separada e instantânea.
+
+Descoberta: o pedido manda ler `notes/audit-04-maintainability.md` e
+`notes/audit-plan.md` PRIMEIRO, e nenhum dos dois existe neste repositório
+(28 commits, um branch, nenhuma deleção no histórico; a sessão 4 da série de
+auditorias nunca rodou). A proposta foi escrita sobre o próprio pedido do
+usuário como diagnóstico, e isso está declarado na proveniência dela — não se
+cita uma auditoria que não existe. A frase que virou o centro do desenho da
+varredura aberta é do usuário, não do repo: "reverificação só reconfere o que eu
+já sabia perguntar".
+
+Quatro achados ao vivo desta sessão, todos reproduzíveis por comando:
+(F1) `semgrep`, `gitleaks` e `pip-audit` NÃO estão instalados nesta máquina —
+cinco linhas AUTOMATED da matriz dependem deles; (F2) `claude plugin details
+my-method` imprime o inventário do kit pela boca do próprio arnês (4 skills, 1
+agente, 1 hook, ~271 tokens sempre-ligados) — a sonda de saúde mais útil
+disponível, que nenhum desenho anterior tinha; (F3) a documentação diz que
+instalação por marketplace é CÓPIA CONGELADA em cache, e o carimbo de instalação
+é 2026-08-10T05:17Z, mas o agente (23:46) e o hook (00:18 do dia 11) — ambos
+posteriores — aparecem carregados; ou seja, o kit vem dependendo de um
+comportamento não documentado a cada aplicação, sem aviso no dia em que parar;
+(F4) sobrou uma junção `.claude/skills/my-method` da era pré-marketplace,
+sombreada pela instalação e não carregada.
+
+A pesquisa dos eixos B e D (delegada a subagentes, arquivos em
+`notes/research-maintenance/`) já funcionou como meia primeira rodada e achou
+quatro coisas: gitleaks está CONGELADO por decisão do mantenedor ("security
+patches only", sucessor Betterleaks) e a matriz depende dele em duas linhas; a
+lista OWASP 2025 tem duas categorias que este repo não cobre em lugar nenhum
+(A03 cadeia de suprimentos ampliada, A10 tratamento de exceções); o Fable 5 cai
+automaticamente para outro modelo em prompts que os classificadores dele marcam
+como de cibersegurança — bem onde o gatilho UP da v7 manda escalar; e três das
+próprias fontes do repo devolvem HTTP 200 sem conteúdo útil, o que fez a
+watchlist ganhar uma coluna de RECEITA de reverificação em vez de só a URL.
+
+Por que importa: F3 é a origem da decisão D-VER da proposta (bumpar `version` no
+`plugin.json` a cada aplicação, e comparar o inventário do arnês contra o kit em
+disco). A proposta completa está em
+`notes/proposals/maintenance-command-proposal.md` e só vira comando depois da
+aprovação explícita do usuário sobre o texto. Ela também introduz uma QUARTA
+classe de proveniência — **mudança externa** — ao lado do atrito de piloto e das
+três exceções conscientes (v4/grilling, v5/segurança, v7/modelo-esforço), com a
+regra que a limita: mudança externa que QUEBRA algo é defeito e vira correção;
+mudança externa que só HABILITA algo novo é candidata, e a resposta padrão é não.
+
 ## MINE
