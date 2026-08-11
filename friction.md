@@ -178,4 +178,32 @@ barata agora que o verify-gate existe, mas é mudança de comportamento do
 hook — proposta própria), e a rec 3 (recomendação de modelo/esforço no
 início da tarefa, passo 10, ainda ABSENT).
 
+### 2026-08-11 — proposta da rec 3 (modelo/esforço no início da tarefa) — registro de proveniência
+
+Contexto: continuação da sessão 3 da auditoria, depois da rec 4 aplicada.
+O que foi feito imediatamente antes: o usuário pediu a proposta da rec 3
+da audit-01 (passo 10 do fluxo-alvo, o único ainda ABSENT) por escrito,
+sem aplicar.
+
+Descoberta: TERCEIRA exceção consciente à regra "mudar só com friction de
+piloto" (depois da v4/grilling e da v5/segurança) — não nasceu de entrada
+de friction, e sim da rec 3 da audit-01 a pedido explícito do usuário;
+honestidade mantida: a própria audit-01 registrou a ocorrência ao vivo
+("a sessão de auditoria começou em configurações herdadas até o usuário
+trocar à mão"), mas sem entrada de piloto. Mecanismo re-verificado ao
+vivo em 2026-08-11 por subagente: /model segue só-usuário
+(code.claude.com/docs/en/commands.md), frontmatter model:/effort: segue
+de escopo de turno, nada mudou desde 2026-08-10 — e existe a substituição
+`${CLAUDE_EFFORT}` (skills.md), que o desenho aproveita para calar a
+recomendação quando o esforço atual já é o recomendado.
+
+Por que importa: proposta completa em
+`notes/proposals/method-v7-model-effort-proposal.md` (novo diretório
+notes/proposals/, escolhido pelo usuário); só vira method.md v7 (e
+espelhos — a cópia embutida do método em start-project.md é a única das
+quatro que muda) depois da aprovação explícita do usuário sobre o texto.
+Regra central do desenho, vinda do documento original do método: o
+SILÊNCIO é o padrão — linha `Model/effort:` na ficha só quando um gatilho
+se aplica; ficha sem linha significa que as configurações atuais servem.
+
 ## MINE
