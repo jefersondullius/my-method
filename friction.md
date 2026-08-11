@@ -51,4 +51,32 @@ precisa ser atualizada manualmente à parte, e nada garante hoje que as
 duas fiquem sincronizadas. Se o método for revisado de novo (v4), checar
 esse arquivo primeiro.
 
+### 2026-08-10 — origem da revisão v4 do Step 1 (registro de proveniência)
+
+Contexto: auditoria 02 (avaliação de skills, sessão 2 de 4). Tarefa em
+andamento: avaliar a skill `grilling` (Matt Pocock) sem instalá-la — teste
+de mecanismo aprovado (sem hook, sem artefato próprio, sem "you MUST") e
+técnica extraída em `notes/research-skills/grilling.md` e no adendo de
+`notes/audit-02-skills.md`. O que foi feito imediatamente antes: avaliação
+de riscos da mudança de cadência, respondida ao usuário antes de qualquer
+edição (pergunta engolida em grupo; concordância em bloco; atribuição de
+respostas; e como o Gate 1 mitiga cada um).
+
+Descoberta: o usuário decidiu incorporar ao Step 1 três aditivos (ordem
+por dependência; fato≠decisão; suposições silenciosas) e uma mudança de
+cadência (bloco crítico um-por-vez — offline/online, login, pagamento,
+dado de terceiros — e depois agrupamento autorizado), escolhendo a
+variante com salvaguarda: classes críticas (dinheiro, dado de terceiros,
+acesso/login, hospedagem, exposição legal) nunca entram em grupo, em
+nenhum ponto da entrevista. Esta mudança NÃO nasceu de atrito observado
+em piloto: nasceu de uma comparação deliberada com a skill `grilling`,
+por decisão explícita do usuário.
+
+Por que importa: a regra do método é mudar só com friction concreta; esta
+é a primeira exceção consciente, e este registro existe para manter
+honesta a origem da mudança. A proposta completa está em
+`notes/method-v4-step1-proposal.md` e só vira `method.md` (e espelhos —
+ver a entrada anterior sobre a cópia embutida no `start-project.md`)
+depois da aprovação explícita do usuário sobre o texto.
+
 ## MINE
