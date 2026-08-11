@@ -1,7 +1,13 @@
 # PROPOSAL — method.md v6, verify-evidence commit gate (D5 / audit-01 rec 2)
 
-Status: **proposed, awaiting the user's approval of this text. Nothing applied.**
-Requested by the user on 2026-08-11 ("Escreva a proposta do D5 antes de aplicar").
+Status: **approved and applied, 2026-08-11.** Kept as the record of what was
+proposed; the apply commit carries all mirrors (see git history and CHANGELOG).
+Text approval: "Aprovo o texto — aplique na ordem da proposta" (2026-08-11).
+Unit tests of the gate script ran BEFORE the apply commit: 13/13 PASS,
+including the documented false positive (`git log --grep commit` is denied by
+the approved loose regex). Integration test in a fresh session: recorded in
+CHANGELOG. Originally requested by the user on 2026-08-11 ("Escreva a proposta
+do D5 antes de aplicar").
 
 Provenance — this change is **friction-backed, not an exception**: the pilots
 recorded exactly the failure class it closes (method.md notas 5c/5d — visual

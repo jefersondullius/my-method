@@ -1,5 +1,62 @@
 # CHANGELOG
 
+## 2026-08-11 — method v6 aplicado: trava de commit por evidência (D5)
+
+Aplicada a proposta `notes/method-v6-commit-gate-proposal.md`, na
+ordem dela:
+
+- NOVOS `kit/my-method/hooks/hooks.json` + `hooks/verify-gate.ps1`:
+  hook PreToolUse em `Bash|PowerShell` que intercepta `git commit` e
+  NEGA sem evidência fresca de PASS (mesmo HEAD, ≤ 60 min), e NEGA
+  commit de tarefa sem `STATE.md` + `PLAN.md` + ficha + evidência
+  juntos no staged. Isenções: primeiro commit do projeto, pastas fora
+  do método, comandos que não são commit. Erro durante a detecção
+  LIBERA (nunca trava trabalho normal por bug); erro depois de
+  identificado um commit vigiado NEGA.
+- `method.md` → **v6**: 5c ganha o ponto de entrada
+  `scripts/verify.ps1` (roda TODAS as checagens acumuladas, saída
+  crua, grava `.claude/last-verify.json`); 5d exige a evidência no
+  staged junto com os três arquivos de status.
+- `kit/my-method/commands/start-project.md`: novo item do Step 5
+  escreve `scripts/verify.ps1` (esqueleto embutido — QUARTO texto
+  embutido no arquivo, armadilha de duplicação registrada em
+  friction.md) e semeia `$checks` com o comando de teste da stack;
+  `.gitignore` nunca ignora a evidência; staging e template CLAUDE
+  (linha `Verify:` + linha de layout) atualizados; cópia embutida do
+  método → v6. Checagem mecânica pré-commit: método (209 linhas),
+  matriz (204) e esqueleto (31) embutidos batem byte a byte com os
+  canônicos — 0 divergências.
+- `kit/my-method/commands/next-task.md`: (d) roda o entrypoint e
+  manda adicionar as checagens novas da ficha ao `$checks` antes de
+  rodar; (e) o commit inclui a evidência.
+- `kit/my-method/templates/CLAUDE.md`: linha `Verify:` + layout.
+
+Teste unitário do script do hook, ANTES deste commit (payloads
+sintéticos de PreToolUse contra projeto descartável no scratchpad):
+**13/13 PASS** — (a) commit inicial isento; (b) sem evidência NEGA;
+(c) `pass: false` NEGA; (d) HEAD diferente NEGA; (e) evidência > 60
+min NEGA; (f) PASS fresco + staged completo LIBERA; (g) ficha fora do
+staged NEGA nomeando o que falta; (h) mesma trava via ferramenta
+PowerShell; (i1) comando não-commit LIBERA; (i2) pasta fora do método
+LIBERA; (x1) `git add -A && git commit` encadeado é detectado; (x2)
+ferramenta que não é shell LIBERA; (x3) **falso positivo conhecido e
+documentado**: `git log --grep commit` cai na trava — a regex
+aprovada é permissiva de propósito; melhorar só se virar friction
+real.
+
+Teste de integração (hook carregado por sessão nova de verdade, casos
+7a–7j da proposta no que dependem do harness): resultado registrado
+em entrada própria deste CHANGELOG, acima desta.
+
+Ressalvas (detalhadas na proposta): janela de 60 min pós-verificação
+no mesmo HEAD; evidência forjada de propósito passa (mentira visível
+no git, não impossível); commit digitado por você num terminal FORA
+do Claude Code não é vigiado (esperado — hooks só veem ferramentas);
+latência estimada de ~100–300 ms por chamada Bash/PowerShell em toda
+sessão (plugin em escopo user; medir se incomodar); os pilotos
+antigos SERÃO travados no próximo commit até ganharem
+`scripts/verify.ps1` (decisão 9, aprovada).
+
 ## 2026-08-11 — teste do allowlist do security-reviewer: PASSOU em sessão nova
 
 Fecha a ressalva 1 da entrada de 2026-08-10 (method v5). Método do

@@ -1,14 +1,16 @@
-# METHOD — v5 (post-audit-03)
+# METHOD — v6 (post-audit-03, D5)
 
-*Nota (pt-BR): quinta versão. Regra de origem: mudar só com friction
-concreta; a v4 (Step 1, comparação com "grilling") foi a primeira
-exceção consciente e a v5 é a segunda — o wiring de segurança nasce da
-lacuna registrada na auditoria 01 (matriz ligada a nada) e do desenho
-aprovado na auditoria 03 (2026-08-10), por decisão explícita do
-usuário, com proveniência em friction.md. Mudanças da v5: STEP 0
-(cópia da matriz no projeto), STEP 4 (triagem de tier + linhas nas
-fichas), STEP 5c (checagens por tipo, revisor só-leitura, laço de
-correção). Nenhum outro passo mudou.*
+*Nota (pt-BR): sexta versão. Esta mudança é lastreada em friction
+observada — as notas 5c/5d registram verificação pulada/rotulada
+"humana" sem tentativa e arquivos de status dessincronizados nos
+pilotos — com desenho vindo da auditoria 01 (rec 2) e da auditoria 03
+(D5), aprovado pelo usuário em 2026-08-11. Mudanças da v6: 5c ganha o
+ponto de entrada de verificação (`scripts/verify.ps1`) que grava
+evidência de máquina (`.claude/last-verify.json`); 5d passa a ser
+travado por hook — commit sem evidência fresca de PASS, ou commit de
+tarefa sem os três arquivos de status + evidência juntos, é NEGADO
+deterministicamente. A v5 (wiring de segurança) permanece intacta.
+Nenhum outro passo mudou.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -131,6 +133,13 @@ c) VERIFY — not negotiable: **attempt automated verification first**;
    the RAW OUTPUT of whatever proves it; re-run everything that
    already existed, not only the new check; give the user something to
    confirm with their own eyes wherever possible.
+   Automated verification runs through the project's verify entrypoint
+   (`scripts/verify.ps1`): it re-runs every accumulated check, prints
+   the raw output, and records machine evidence at
+   `.claude/last-verify.json` — the commit gate reads that file. A task
+   that adds an automated check (including the card's AUTOMATED
+   security rows) adds it to the entrypoint as part of the task; that
+   is how a check joins the regression set.
    The card's security rows run inside this step, by kind:
    - Drift first: if the diff turned on a risk surface the card does
      not declare (new endpoint, new dependency, upload path, stored
@@ -153,7 +162,12 @@ c) VERIFY — not negotiable: **attempt automated verification first**;
      finding" does. Two failed rounds of the same row → Step 6.
 d) Sync EVERY status-bearing file in one commit — `STATE.md`, `PLAN.md`
    row, and the task's own card (`plan/TASK-XXX.md`) — not just
-   `STATE.md`. Commit in English. **Then end the turn with exactly
+   `STATE.md`. Commit in English.
+   The staged set must include `.claude/last-verify.json` together
+   with the three status files — the commit gate denies a task commit
+   missing any of them, and denies any commit without fresh PASS
+   evidence.
+   **Then end the turn with exactly
    this text and nothing else:**
    > Tarefa concluída e commitada. Rode `/clear` antes de continuar.
    Do not offer to continue to the next task, do not ask if the user

@@ -31,17 +31,19 @@ anything.
    for byte, so every project carries the same copy:
 
    ```markdown
-   # METHOD — v5 (post-audit-03)
+   # METHOD — v6 (post-audit-03, D5)
 
-   *Nota (pt-BR): quinta versão. Regra de origem: mudar só com friction
-   concreta; a v4 (Step 1, comparação com "grilling") foi a primeira
-   exceção consciente e a v5 é a segunda — o wiring de segurança nasce da
-   lacuna registrada na auditoria 01 (matriz ligada a nada) e do desenho
-   aprovado na auditoria 03 (2026-08-10), por decisão explícita do
-   usuário, com proveniência em friction.md. Mudanças da v5: STEP 0
-   (cópia da matriz no projeto), STEP 4 (triagem de tier + linhas nas
-   fichas), STEP 5c (checagens por tipo, revisor só-leitura, laço de
-   correção). Nenhum outro passo mudou.*
+   *Nota (pt-BR): sexta versão. Esta mudança é lastreada em friction
+   observada — as notas 5c/5d registram verificação pulada/rotulada
+   "humana" sem tentativa e arquivos de status dessincronizados nos
+   pilotos — com desenho vindo da auditoria 01 (rec 2) e da auditoria 03
+   (D5), aprovado pelo usuário em 2026-08-11. Mudanças da v6: 5c ganha o
+   ponto de entrada de verificação (`scripts/verify.ps1`) que grava
+   evidência de máquina (`.claude/last-verify.json`); 5d passa a ser
+   travado por hook — commit sem evidência fresca de PASS, ou commit de
+   tarefa sem os três arquivos de status + evidência juntos, é NEGADO
+   deterministicamente. A v5 (wiring de segurança) permanece intacta.
+   Nenhum outro passo mudou.*
 
    ## STEP 0 — BEFORE ANYTHING
 
@@ -164,6 +166,13 @@ anything.
       the RAW OUTPUT of whatever proves it; re-run everything that
       already existed, not only the new check; give the user something to
       confirm with their own eyes wherever possible.
+      Automated verification runs through the project's verify entrypoint
+      (`scripts/verify.ps1`): it re-runs every accumulated check, prints
+      the raw output, and records machine evidence at
+      `.claude/last-verify.json` — the commit gate reads that file. A task
+      that adds an automated check (including the card's AUTOMATED
+      security rows) adds it to the entrypoint as part of the task; that
+      is how a check joins the regression set.
       The card's security rows run inside this step, by kind:
       - Drift first: if the diff turned on a risk surface the card does
         not declare (new endpoint, new dependency, upload path, stored
@@ -186,7 +195,12 @@ anything.
         finding" does. Two failed rounds of the same row → Step 6.
    d) Sync EVERY status-bearing file in one commit — `STATE.md`, `PLAN.md`
       row, and the task's own card (`plan/TASK-XXX.md`) — not just
-      `STATE.md`. Commit in English. **Then end the turn with exactly
+      `STATE.md`. Commit in English.
+      The staged set must include `.claude/last-verify.json` together
+      with the three status files — the commit gate denies a task commit
+      missing any of them, and denies any commit without fresh PASS
+      evidence.
+      **Then end the turn with exactly
       this text and nothing else:**
       > Tarefa concluída e commitada. Rode `/clear` antes de continuar.
       Do not offer to continue to the next task, do not ask if the user
@@ -635,6 +649,7 @@ Only after Gate 2 is confirmed:
    Build: `<command, or "n/a" if none>`
    Run: `<command>`
    Test: `<command, or "n/a" if none yet>`
+   Verify: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1`
 
    ## Directory layout
 
@@ -646,6 +661,7 @@ Only after Gate 2 is confirmed:
    STATE.md          project memory — read this first, every session
    PLAN.md           task index only — one line per task
    plan/TASK-XXX.md  one card per task
+   scripts/verify.ps1  verify entrypoint — runs every accumulated check, writes the evidence the commit gate reads
    .claude/skills/   procedures (see "What does NOT go here" below)
    ```
 
@@ -732,16 +748,57 @@ Only after Gate 2 is confirmed:
    <Empty.>
    ```
 
-3. Run `git init` if the directory is not already a git repository.
+3. Write `scripts/verify.ps1` with EXACTLY the content in the block
+   below, then seed `$checks` with the stack's own test command from
+   Step 3's decision, if one exists (the same command recorded as
+   `Test:` in `CLAUDE.md`):
 
-4. Only if the stack chosen in Step 3 produces files that must never be
+   ```powershell
+   # Verify entrypoint - the runner of record for this project.
+   # Runs EVERY accumulated automated check, prints raw output on screen,
+   # and records machine evidence at .claude/last-verify.json (read by the
+   # my-method commit gate). Each task that adds an automated check ADDS a
+   # line to $checks as part of that task; a line is removed only if the
+   # feature it checks is removed.
+
+   $checks = @(
+       # @{ name = 'tests'; command = 'npm test' }
+   )
+
+   $results = @()
+   $allPass = $true
+   foreach ($c in $checks) {
+       Write-Output ('=== {0}: {1}' -f $c.name, $c.command)
+       cmd /c $c.command
+       $code = $LASTEXITCODE
+       Write-Output ('=== exit {0}' -f $code)
+       if ($code -ne 0) { $allPass = $false }
+       $results += @{ name = $c.name; command = $c.command; exit = $code }
+   }
+   $headProbe = cmd /c "git rev-parse HEAD 2>nul"
+   $head = if ($LASTEXITCODE -eq 0) { ([string]$headProbe).Trim() } else { 'NO-COMMITS' }
+   if (-not (Test-Path '.claude')) { New-Item -ItemType Directory '.claude' | Out-Null }
+   @{
+       verified_at = (Get-Date).ToString('o')
+       head        = $head
+       pass        = $allPass
+       checks      = $results
+   } | ConvertTo-Json -Depth 4 | Out-File -Encoding utf8 '.claude/last-verify.json'
+   if ($allPass) { Write-Output 'VERIFY: PASS'; exit 0 } else { Write-Output 'VERIFY: FAIL'; exit 1 }
+   ```
+
+4. Run `git init` if the directory is not already a git repository.
+
+5. Only if the stack chosen in Step 3 produces files that must never be
    versioned (dependency folders, build output, local files holding
    secrets), write a minimal `.gitignore` listing exactly those — no
-   generic boilerplate beyond what this stack actually produces.
+   generic boilerplate beyond what this stack actually produces. Never
+   ignore `.claude/last-verify.json`; if the stack's ignore rules cover
+   `.claude/`, add the exception line `!.claude/last-verify.json`.
 
-5. Stage `method.md`, `SECURITY-MATRIX.md`, `friction.md`, `SPEC.md`,
-   `STATE.md`, `CLAUDE.md`, `PLAN.md`, `plan/*.md`, and `.gitignore` if
-   created, and make ONE commit, in English, e.g.:
+6. Stage `method.md`, `SECURITY-MATRIX.md`, `friction.md`, `SPEC.md`,
+   `STATE.md`, `CLAUDE.md`, `PLAN.md`, `plan/*.md`, `scripts/verify.ps1`,
+   and `.gitignore` if created, and make ONE commit, in English, e.g.:
    ```
    Initialize project: spec, stack, plan
    ```

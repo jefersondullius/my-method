@@ -9,6 +9,7 @@
 Build: `<command>`
 Run: `<command>`
 Test: `<command>`
+Verify: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1`
 
 ## Directory layout
 
@@ -20,6 +21,7 @@ SPEC.md           behaviour spec, agreed with the user
 STATE.md          project memory — read this first, every session
 PLAN.md           task index only — one line per task
 plan/TASK-XXX.md  one card per task
+scripts/verify.ps1  verify entrypoint — runs every accumulated check, writes the evidence the commit gate reads
 .claude/skills/   procedures (see "What does NOT go here" below)
 ```
 

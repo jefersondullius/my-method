@@ -54,9 +54,13 @@ funcione"), never mechanics ("agora vou abrir o arquivo").
 
 Follow the card's "How we will check it".
 
-- Attempt automated verification first. Only say "verificação humana
-  necessária" after a real attempt has failed, and say exactly what
-  failed — never before even trying.
+- Attempt automated verification first, by running the verify
+  entrypoint: `powershell -NoProfile -ExecutionPolicy Bypass -File
+  scripts/verify.ps1`. If this task's card added automated checks
+  (including AUTOMATED security rows), add them to `$checks` in
+  `scripts/verify.ps1` as part of the task, BEFORE running it. Only
+  say "verificação humana necessária" after a real attempt has
+  failed, and say exactly what failed — never before even trying.
 - Show the RAW OUTPUT of the verifying command on screen — the actual
   result, not a sentence describing it.
 - Re-run every check that already existed for earlier `done` tasks in
@@ -99,7 +103,9 @@ Only after every check in (d) passes:
 1. Update, in the same pass: the task's own card status to `done`,
    its row in `PLAN.md`, and `STATE.md` ("Tasks completed", "CURRENT
    TASK", and any new settled decision or thing that broke).
-2. Commit all changed files together, in English.
+2. Commit all changed files together, in English — including
+   `.claude/last-verify.json`: the commit gate requires it staged with
+   the three status files, and denies the commit otherwise.
 3. End the turn with exactly this text and nothing else:
 
    > Tarefa concluída e commitada. Rode `/clear` antes de continuar.
