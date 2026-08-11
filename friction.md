@@ -153,4 +153,29 @@ linha antes do bloco crítico"). É mudança de comando, não de `method.md` —
 o método já diz o que perguntar; é o comando que começa cego. Aplicar só
 com aprovação explícita, como sempre.
 
+### 2026-08-11 — proposta da rec 4 (quatro remendos pequenos) — registro de proveniência
+
+Contexto: continuação da sessão 3 da auditoria, depois do piloto v5+v6 de
+ponta a ponta. O que foi feito imediatamente antes: o usuário pediu a
+proposta da rec 4 da audit-01 por escrito antes de aplicar.
+
+Descoberta: a rec 4 é o pacote de quatro remendos L3/L4 da audit-01 —
+captura da ideia (`argument-hint` + perguntar antes do bloco crítico),
+marcador `Approved:` no SPEC.md no Gate 1, fechamento de `start-project` e
+`next-task` mostrando `git show --stat` cru, e critérios de tamanho na
+ficha. Proveniência mista, declarada item a item: a captura da ideia é
+LASTREADA EM FRICTION observada (entrada do piloto, 2026-08-11, logo
+acima); os outros três vêm da análise da audit-01 (passos 5, 8/13, 7),
+aprovados em trabalho por este pedido. `method.md` NÃO é tocado por nenhum
+item — é tudo mecânica de comando/template, sem bump de versão e sem tocar
+as cópias embutidas (método, matriz, esqueleto).
+
+Por que importa: a proposta completa está em
+`notes/rec4-small-patches-proposal.md` e só é aplicada depois da aprovação
+explícita do usuário sobre o texto. Fora do escopo, nomeados lá: a extensão
+L1 do hook para travar escrita de plano antes do SPEC aprovado (ficou
+barata agora que o verify-gate existe, mas é mudança de comportamento do
+hook — proposta própria), e a rec 3 (recomendação de modelo/esforço no
+início da tarefa, passo 10, ainda ABSENT).
+
 ## MINE
