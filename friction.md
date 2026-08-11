@@ -105,4 +105,31 @@ carregar TRÊS cópias embutidas (método, matriz, templates) — qualquer
 revisão futura da matriz ou do método precisa tocar o arquivo canônico E as
 cópias embutidas no mesmo commit.
 
+### 2026-08-11 — origem da revisão v6 (trava de commit por evidência) — registro de proveniência
+
+Contexto: continuação da sessão 3 da auditoria, depois da v5 aplicada e do
+teste do allowlist do security-reviewer aprovado. O que foi feito
+imediatamente antes: o usuário pediu a proposta do D5 por escrito antes de
+aplicar ("Escreva a proposta do D5 antes de aplicar", 2026-08-11).
+
+Descoberta: diferente da v4 e da v5, esta mudança é LASTREADA EM FRICTION
+observada — as notas 5c/5d do próprio method.md registram, nos pilotos,
+verificação pulada/rotulada "humana" sem tentativa e arquivos de status
+dessincronizados. Não é exceção à regra "mudar só com friction concreta";
+é a regra funcionando. Desenho: rec 2 da auditoria 01 (único investimento
+L1 recomendado) + D5 da auditoria 03 (deixado fora da v5 de propósito para
+aprovação separada de custo). Mecânica de hooks re-verificada ao vivo em
+2026-08-11 por subagente (URLs na proposta).
+
+Por que importa: a proposta completa está em
+`notes/method-v6-commit-gate-proposal.md` e só vira method.md v6 (e
+espelhos) depois da aprovação explícita do usuário sobre o texto. Aviso de
+duplicação atualizado: com a v6, `commands/start-project.md` passa a
+embutir QUATRO textos (método, matriz, templates, esqueleto do
+verify.ps1) — qualquer revisão futura toca o canônico E as cópias no mesmo
+commit. Ressalva honesta que a proposta carrega: a trava prova que a
+verificação RODOU e PASSOU há pouco; se as checagens são as CERTAS continua
+sendo julgamento (L3), e evidência forjada de propósito é mentira visível
+no git (L4), não impossível.
+
 ## MINE
