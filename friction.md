@@ -257,4 +257,56 @@ três exceções conscientes (v4/grilling, v5/segurança, v7/modelo-esforço), c
 regra que a limita: mudança externa que QUEBRA algo é defeito e vira correção;
 mudança externa que só HABILITA algo novo é candidata, e a resposta padrão é não.
 
+### 2026-08-12 — primeira rodada real de manutenção — registro de proveniência
+
+Contexto: a pesquisa dos cinco eixos rodou em 2026-08-11 (arquivos
+`notes/research-maintenance/2026-08-11-axis-{A..E}.md`), mas a sessão terminou
+antes do passo 3 do `update-method` — a proposta nunca foi escrita. Esta sessão
+retomou do ponto exato e escreveu
+`notes/proposals/maintenance-2026-08-11.md`. Nada foi aplicado.
+
+Atrito real do próprio comando, e a primeira coisa que ele aprendeu sobre si:
+o passo 3 manda ler **apenas** os resumos de cinco linhas dos subagentes. Esses
+resumos vivem no contexto da sessão que delegou e **não sobrevivem** a um
+`/clear` nem a uma sessão interrompida. Os cinco arquivos de pesquisa
+sobrevivem — são o registro durável — mas o comando não diz para cair neles.
+Virou a candidata C-8 da proposta, com o texto exato.
+
+Achados que valem a rodada (a lista completa está na proposta):
+(D-1) **`gitleaks git -s .` não é invocação válida** — `-s`/`--source` só existe
+nos subcomandos `detect` e `protect`, ambos depreciados desde a v8.19.0; o
+`git` recebe o caminho como argumento posicional. A linha 8.1 da matriz — a que
+faz valer a regra "nenhuma chave em arquivo versionado" — manda digitar um
+comando que sai com erro e não varre nada. Estava errada desde que foi escrita,
+e passou incólume pela linha de base inteira porque **toda receita do eixo B
+perguntava "a ferramenta está viva?" e nenhuma perguntava "ela ainda aceita a
+string que a gente digita?"**. Daí a candidata C-3, que vira regra da watchlist.
+(D-2) Uma **citação fabricada**: `/model` "can only be invoked by the user, not
+by the model itself", atribuída ao commands.md e "verificada ao vivo" —
+**0 ocorrências** no corpo inteiro da documentação (7,1 MB de `llms-full.txt`).
+A conclusão da v7 continua de pé, e por evidência mais forte (a tabela marca com
+`[Skill]` exatamente as entradas que o Claude pode invocar sozinho, e `/model`
+não a carrega); só a citação precisa ser corrigida, em `CHANGELOG.md:129-132` e
+na proposta da v7. Duas receitas da watchlist mandavam confirmar essa frase
+inexistente — uma rodada futura ou reportaria regressão falsa ou inventaria a
+confirmação.
+
+Duas coisas que a rodada **derrubou**, e que estavam registradas como verdade:
+o ruleset `p/owasp-top-ten` do Semgrep **não** é 2021 (517 das 559 regras
+carregam código 2025 — a "suspeita forte" do livro-caixa estava errada), e o
+Betterleaks **existe mesmo**, MIT, v1.7.4, 17 releases em 6 meses, mesmos
+mantenedores do gitleaks — mas a recomendação segue **não**, porque paridade de
+detecção não foi medida e o gitleaks ainda funciona.
+
+Dois subagentes **discordaram** entre si, e isso ficou registrado em vez de
+resolvido no silêncio: se a sonda 1 do health-check deve comparar números de
+versão (o eixo C está certo — o livro-caixa já diz que a divergência é esperada,
+comparar daria alarme falso permanente), e qual marcação o changelog da doc usa.
+
+Por que importa: esta é a primeira vez que o kit encontra um defeito **em si
+mesmo** por manutenção agendada em vez de por atrito de piloto — exatamente o
+que a classe **mudança externa** foi criada para carregar. E o defeito mais caro
+não veio de nada ter mudado lá fora: veio de uma receita que perguntava a
+pergunta errada desde o começo.
+
 ## MINE
