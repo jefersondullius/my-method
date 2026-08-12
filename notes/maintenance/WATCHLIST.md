@@ -11,6 +11,15 @@ while telling you nothing — a redirect shell, a meta-refresh stub, an
 empty JavaScript page. "Is it live" is the wrong question; the recipe
 says what to read and where.
 
+Third rule, learned from the 2026-08-11 run: a recipe must check the
+**invocation**, not just the project. `gitleaks git -s .` sat in row
+8.1 through a full baseline pass because every recipe asked "is the
+tool alive and current" and none asked "does it still accept the exact
+string we type". For a Go/cobra tool, read the `func init()` block of
+the subcommand's own file; for a docs page, grep `<main>`, not the
+whole HTML; for a registry config, grep the CLI reference for the
+literal flag example.
+
 Seeded 2026-08-11 from `notes/research-maintenance/cli-mechanics.md`
 and `notes/research-maintenance/sources-baseline.md`, both verified
 live that day. Nothing here was written from memory.
@@ -19,15 +28,15 @@ live that day. Nothing here was written from memory.
 
 | Source | URL | Why the method depends on it | Re-check recipe |
 |---|---|---|---|
-| Docs changelog | https://code.claude.com/docs/en/changelog.md | The single date-ordered surface for everything below | Read the first `##` heading: it is the latest version and its date |
+| Docs changelog | https://code.claude.com/docs/en/changelog.md | The single date-ordered surface for everything below | Read the first **version** entry — skip any `Documentation Index` preamble, and note the page may render entries as `<Update label="…" description="…">` rather than `##`. Then **always cross-check** `GET https://api.github.com/repos/anthropics/claude-code/releases/latest` → `tag_name`, `published_at`. The docs page lags: on 2026-08-11 it topped out at 2.1.227 while Releases reported 2.1.228. Releases is the version signal; the changelog is the prose |
 | Hooks | https://code.claude.com/docs/en/hooks | The commit gate is a plugin PreToolUse hook; `permissionDecision: "deny"` is its blocking mechanism | Confirm `PreToolUse` still lists "Can block it" and that `deny` is still a documented `permissionDecision` value |
 | Skills (commands merged here) | https://code.claude.com/docs/en/skills | All four original commands rely on `disable-model-invocation`; `start-project` on `argument-hint` | Confirm both fields still exist in the frontmatter reference table |
 | Settings | https://code.claude.com/docs/en/settings | `effortLevel`, `disableAllHooks` (the gate's escape hatch) | Confirm `effortLevel` accepts the same values and `disableAllHooks` still exists |
-| Built-in commands | https://code.claude.com/docs/en/commands | `/clear`, `/model`, `/effort` are user-typed built-ins — the whole session loop assumes it | Confirm `/model` is still described as user-only |
+| Built-in commands | https://code.claude.com/docs/en/commands | `/clear`, `/model`, `/effort` are user-typed built-ins — the whole session loop assumes it | Confirm the `/model` row still carries **no** `[Skill]`/`[Workflow]` marker, and that the legend above the table still says built-ins are "coded into the CLI" while `[Skill]` entries are "a prompt handed to Claude, which Claude can also invoke automatically when relevant" |
 | Plugins reference | https://code.claude.com/docs/en/plugins-reference | Plugin layout, hooks.json, agents/, `${CLAUDE_PLUGIN_ROOT}`, and the plugin cache | Read the "plugin caching and file resolution" section — it is what D-VER guards against |
 | Plugin marketplaces | https://code.claude.com/docs/en/plugin-marketplaces | This repo IS a local marketplace | Confirm local-path marketplace sources are still supported |
 | Subagents | https://code.claude.com/docs/en/sub-agents | `security-reviewer`'s read-only `tools:` allowlist is structural, not prose | Confirm `tools` is still an allowlist and plugin agents still honour it |
-| Headless mode | https://code.claude.com/docs/en/headless | Every pilot and probe in this repo runs through `claude -p` | Confirm `-p` still loads plugins by default (only `--bare` skips them) |
+| Headless mode | https://code.claude.com/docs/en/headless | Every pilot and probe in this repo runs through `claude -p` | Confirm `-p` still loads plugins by default (only `--bare` skips them) — **and read the `<Note>` under "Start faster with bare mode"**, which as of 2026-08-11 says `--bare` "will become the default for `-p` in a future release". That Note is where the reversal gets announced, and it would break health-check probes 1 and 3 silently |
 | CLI: `claude plugin list --json` | https://code.claude.com/docs/en/plugins-reference#plugin-list | Health-check probe 1 | Run it; confirm `scope`, `enabled`, `installPath`, `errors` are still in the real output — the docs describe fewer fields than it emits |
 | CLI: `claude plugin details` | https://code.claude.com/docs/en/plugins-reference#plugin-details | Health-check probe 1's inventory comparison | Run `claude plugin details my-method`; confirm the Skills/Agents/Hooks grouping still prints |
 | CLI: `claude plugin validate` | https://code.claude.com/docs/en/plugins-reference#common-issues | Health-check probe 5 and the apply-time schema check | Run `claude plugin validate ./kit/my-method`; expect `✔ Validation passed` |
@@ -39,7 +48,7 @@ live that day. Nothing here was written from memory.
 | OWASP Top 10 | https://owasp.org/www-project-top-ten/ | The whole matrix's framing; `research/13` cites 2025 codes | Read the "most current released version" sentence. **Never** status-check `owasp.org/Top10/` — it returns 200 for a client-side redirect shell regardless of edition |
 | Semgrep CLI | https://github.com/semgrep/semgrep | Rows 1.1, 7.1 (`semgrep --config p/owasp-top-ten`) | `GET https://api.github.com/repos/semgrep/semgrep/releases/latest` → `tag_name`, `published_at`; confirm `archived: false` and the license |
 | Semgrep OWASP ruleset | https://semgrep.dev/c/p/owasp-top-ten | The ruleset rows 1.1 and 7.1 name | Fetch the **`/c/p/`** config endpoint and count `- id:` entries. The human page `/p/owasp-top-ten` is an empty JS shell to a fetcher |
-| gitleaks | https://github.com/gitleaks/gitleaks | Rows 2.1, 8.1 (`gitleaks git -s .`) | `GET .../releases/latest`, then re-read the top of the README: as of 2026-08-11 it declares feature-freeze, security patches only, successor **Betterleaks** |
+| gitleaks | https://github.com/gitleaks/gitleaks | Row 8.1 (`gitleaks git .`); row 2.1 names the tool with no flags | `GET .../releases/latest`; re-read the top of the README for the feature-freeze statement (security patches only, successor **Betterleaks**); and **diff the `func init()` block of `cmd/git.go` against the flags row 8.1 types** — that block is the authoritative list of what `gitleaks git` accepts |
 | npm audit | https://docs.npmjs.com/cli/audit | Row 10.1 (Node projects) | Request the URL and **follow the meta-refresh inside the body** — it is a 77-byte stub. The major-version number in the resulting `/cli/vNN/` path is the signal |
 | pip-audit | https://github.com/pypa/pip-audit | Row 10.1 (Python projects) | `GET https://api.github.com/repos/pypa/pip-audit/releases/latest` → `tag_name`, `published_at` |
 | OWASP cheat sheets | https://cheatsheetseries.owasp.org/ | `research/13` and the matrix's Fix-direction column cite five of them | Confirm each cited cheat sheet URL still resolves to a page with that title |
@@ -55,6 +64,7 @@ triggers are verbatim from that evaluation.
 | `webapp-testing` (manual copy, not the bundle) | Official Anthropic, skills repo | A web-UI task reaches verification AND committed Playwright specs prove hard to author (a friction entry says so) | **Partly** — a friction entry would be in that project's `friction.md`. Ask the user |
 | `playwright` MCP plugin | Microsoft, official marketplace | Same family as above, only if interactive browser debugging is needed | **No** — ask the user |
 | `security-guidance` | Official Anthropic, official marketplace | Matrix wiring done (it is, since v5) **and** a project triages into a login/personal-data tier. Try Semgrep-in-verify + built-in `/security-review` first | **Partly** — the wiring half is now MET; the tier half needs a real T2 project. Ask the user |
+| `claude-security` | Official Anthropic, https://code.claude.com/docs/en/claude-security | A real T2/T3 project reaches STEP 5c and the matrix's REVIEW rows prove too many to review one at a time. Does NOT replace `security-reviewer`: unkeyed to matrix row IDs, outputs a report directory rather than a per-card finding, scans are explicitly nondeterministic ("two scans of the same code can surface different findings") while STEP 5c's fix loop needs a fresh reviewer to clear *the same row*, and its patch flow contradicts the reviewer's read-only `tools:` guarantee. Costs: v2.1.154+, paid plan (on Pro, dynamic workflows enabled in `/config`), `python3` ≥ 3.9.6, significant tokens against usage limits | **No** — ask the user |
 | `skill-creator` | Official Anthropic, official marketplace | A scheduled kit task that authors or tunes a skill with evals | **Yes** — visible in this repo's own plans and notes |
 | TDD (staged, prose-only, no install) | audit-02 §"The TDD question" | First observed "check passed but behaviour wrong", or an unfalsifiable check, in a pilot | **Partly** — pilot records live in `CHANGELOG.md` and `friction.md` here |
 | Official marketplace itself | https://github.com/anthropics/claude-plugins-official | n/a — re-checked for renames | `GET .../main/.claude-plugin/marketplace.json`; read `len(plugins)` and check the **`renames`** map for any plugin named above. Plugin names in that catalog are not permanently stable |
@@ -63,7 +73,7 @@ triggers are verbatim from that evaluation.
 
 | Fact the kit relies on | URL | Where it is relied on | Re-check recipe |
 |---|---|---|---|
-| `/model` is user-only; the model cannot switch itself | https://code.claude.com/docs/en/commands | method v7 STEP 5a; the entire "recommend, don't switch" design | Confirm the user-only wording still stands |
+| `/model` is user-only; the model cannot switch itself | https://code.claude.com/docs/en/commands | method v7 STEP 5a; the entire "recommend, don't switch" design | Two checks. Presence: `grep -n "only recognized at the start of your message"` in `commands.md` → that sentence, and only that sentence, is the citable basis. Absence: `grep -c "not by the model itself"` over `llms-full.txt` → **expect 0**. Do not re-cite the string the CHANGELOG once carried; it is not in the docs |
 | `/effort` values and per-model support | https://code.claude.com/docs/en/model-config | v7 card lines name an effort level | Diff the "Adjust effort level" table against what the ledger recorded |
 | Model aliases and provider-dependent resolution | https://code.claude.com/docs/en/model-config | v7 card lines name a model | Diff the "Model aliases" table. A card naming an alias that no longer exists is a defect |
 | `${CLAUDE_EFFORT}` substitution | https://code.claude.com/docs/en/skills | `next-task` (b) uses it to skip a pointless ask | Confirm it is still in the substitutions table |
@@ -79,7 +89,7 @@ command, template or file it targets, or it is discarded.
 
 | Source | URL | Window | Re-check recipe |
 |---|---|---|---|
-| Claude Code docs changelog | https://code.claude.com/docs/en/changelog.md | Since axis E's last-check date | Read every `##` entry newer than that date |
+| Claude Code docs changelog | https://code.claude.com/docs/en/changelog.md | Since axis E's last-check date | Read every version entry newer than that date (see Axis A row 1 on the heading form), and cross-check GitHub Releases for anything the docs page has not documented yet |
 | Claude Code GitHub Releases | https://api.github.com/repos/anthropics/claude-code/releases/latest | Same | Cheapest version probe: one JSON object with `tag_name` and `published_at` |
 | Anthropic news | https://www.anthropic.com/news | Same | Read post titles + dates until you pass the window. **Company/policy/safety skew** |
 | Claude blog | https://claude.com/blog | Same | Read post titles + dates until you pass the window. **Product/how-to skew — a SEPARATE feed from anthropic.com/news, confirmed 2026-08-11; checking one misses about half** |

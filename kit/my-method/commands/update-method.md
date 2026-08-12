@@ -84,9 +84,12 @@ repository — say so, and the main session will ask the user.
 
 **Axis D — Models and mechanisms.** Which Claude models and effort
 levels exist today in Claude Code, and which the docs list as
-deprecated or retired. Then: is `/model` still user-only, is `/effort`
-still user-only, is `${CLAUDE_EFFORT}` still a documented
-substitution. Any model named anywhere in this repository that no
+deprecated or retired. Then: does the all-commands table still leave
+the `/model` and `/effort` rows unmarked by `[Skill]`/`[Workflow]`
+(the structural form of "the model cannot switch itself" — do NOT go
+looking for a "user-only" sentence, there is none), is
+`${CLAUDE_EFFORT}` still a documented substitution. Any model named
+anywhere in this repository that no
 longer exists is a defect — method v7 lets a task card name a model,
 and a card naming a dead model sends the user to type a command that
 fails.
@@ -109,6 +112,13 @@ window covered. Do not pad the list to look productive.
 
 Read only the five five-line summaries. Open a research file only to
 quote a specific claim you are putting in the proposal.
+
+If the five summaries are not in this session's context — because the
+run was interrupted, cleared, or resumed later — read the five
+research files in full instead. They are the durable record; the
+summaries are not. Say in the proposal that this is what happened, and
+check the axis files' own dates against the ledger before trusting
+them as current.
 
 Sort every finding into exactly one of three buckets:
 

@@ -37,8 +37,13 @@ Subagent's five-line summary:
 
 Claims this proposal builds on (all accessed 2026-08-11):
 
-1. "/model can only be invoked by the user, not by the model itself" —
+1. `/model` is a built-in command, not a skill: "A command is only recognized at
+   the start of your message", and the all-commands table marks `[Skill]` entries —
+   the ones "Claude can also invoke automatically" — while the `/model` and
+   `/effort` rows carry no such marker —
    https://code.claude.com/docs/en/commands.md
+   *(Corrigido em 2026-08-12: a redação original citava uma frase inexistente na
+   documentação. A conclusão não muda. Ver `maintenance-2026-08-11.md` D-2.)*
 2. `model` setting: "Read once at session start… To switch models mid-session,
    use the /model command instead" — https://code.claude.com/docs/en/settings.md
 3. `effortLevel`: written by /effort; per-session override via `--effort` CLI

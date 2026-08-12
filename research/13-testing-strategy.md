@@ -230,6 +230,34 @@ specifically because they run code instead of reading it.
 
 *Source: [ProjectDiscovery — "AI code review has come a long way, but it can't catch everything"](https://projectdiscovery.io/blog/ai-code-review-vs-neo), accessed 2026-08-10 — "code-only review misses issues that only become visible when you exercise an end-to-end flow." Specific numeric claims about LLM recall/precision on security review (e.g. exact false-negative rates) vary by study and model version — treated as NOT VERIFIED here rather than quoted as a fixed number.*
 
+## What the Semgrep OWASP ruleset does and does not cover
+
+The `p/owasp-top-ten` ruleset that rows 1.1 and 7.1 name **is** keyed
+to the 2025 edition, not the 2021 one: of its 559 rules, 517 (92.5%)
+carry a 2025 code. That closes an open question this repository had
+recorded the other way around.
+
+What it does not close is coverage. Two of the 2025 edition's
+categories appear in **zero** of those 559 rules: `A10:2025`
+Mishandling of Exceptional Conditions, and `A03:2025` Software Supply
+Chain Failures (no rule mentions the phrase at all). That is not an
+oversight in the ruleset — it is the shape of the tool. Both
+categories are about what a system does at runtime and about where its
+dependencies came from, and neither is visible in the source patterns
+a static scanner matches.
+
+The practical consequence for this matrix: a clean
+`semgrep --config p/owasp-top-ten` run is evidence about the eight
+categories the ruleset encodes, and says nothing about the other two.
+Row 10.1 (`npm audit` / `pip-audit`) covers part of A03's ground —
+known-vulnerable dependency versions — but not the rest of what the
+2025 edition folded into supply chain (build and distribution
+integrity, compromised maintainers). A10 is covered nowhere in this
+matrix, and is left to the general "what an LLM-driven review can and
+cannot establish" limits above.
+
+*Source: [Semgrep — `p/owasp-top-ten` config endpoint](https://semgrep.dev/c/p/owasp-top-ten), accessed 2026-08-11. The `/c/p/` endpoint returns the ruleset itself (1,448,110 bytes); the counts above come from parsing it. The human-facing page `semgrep.dev/p/owasp-top-ten` is an empty JavaScript shell to a fetcher and cannot be read this way — NOT VERIFIED whether a browser-rendered banner on that page says anything the config endpoint does not.*
+
 ## Self-review weakness
 
 The same model that wrote a piece of code, asked to review that code

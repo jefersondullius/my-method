@@ -309,4 +309,42 @@ que a classe **mudança externa** foi criada para carregar. E o defeito mais car
 não veio de nada ter mudado lá fora: veio de uma receita que perguntava a
 pergunta errada desde o começo.
 
+### 2026-08-12 — método v8 por mudança externa — registro de proveniência
+
+Primeira revisão do método que **não** veio de atrito de piloto nem de exceção
+consciente: veio da manutenção agendada. Classe **mudança externa**, a quarta
+origem possível, criada em 2026-08-11 e usada pela primeira vez aqui.
+
+O que mudou: uma palavra no STEP 5a. Dizia "Only the user can switch model or
+effort"; agora diz "switch **the session's** model or effort". A frase antiga
+era mais larga do que a evidência sustenta —
+`code.claude.com/docs/en/model-config` (acessado em 2026-08-11) lista seis
+formas de definir esforço, e a sexta é frontmatter de skill ou de subagente,
+que o próprio método v7 rejeitou de propósito por ser válida só por um turno.
+Ou seja: o modelo não troca o esforço **da sessão**, que é do que o passo
+fala — mas "só o usuário troca esforço, ponto" é falso, e um leitor futuro ia
+achar a documentação contradizendo o método.
+
+Por que valeu um bump de versão por uma palavra: o custo é o procedimento
+inteiro (v7 → v8, nota de origem, esta entrada, cópia embutida). O que se
+compra é uma frase que carrega peso — ela é a justificativa de por que o
+método interrompe o usuário no início da tarefa em vez de trocar sozinho. Uma
+frase load-bearing imprecisa no método canônico custa mais caro do que um
+número de versão feio.
+
+Regra que a classe carrega, e que esta rodada exercitou dos dois lados:
+mudança externa que QUEBRA algo é defeito e vira correção (foram seis: D-1 a
+D-6); mudança externa que só HABILITA algo novo é candidata e a resposta
+padrão é não (foram oito candidatas, quatro aceitas — e as quatro aceitas
+passaram pelo teste de adoção porque removem algo ou fecham lacuna já nomeada,
+não porque pareciam boas).
+
+Um detalhe que merece registro próprio: o defeito mais caro da rodada (D-1, o
+`gitleaks git -s .`) **não veio de nada ter mudado lá fora**. A string estava
+errada desde o dia em que foi escrita e sobreviveu a uma linha de base inteira
+porque toda receita perguntava "a ferramenta está viva?" e nenhuma perguntava
+"ela ainda aceita o que a gente digita?". Manutenção agendada encontrou um
+defeito de origem, não uma regressão. Vale saber que ela serve para isso
+também.
+
 ## MINE

@@ -1,4 +1,4 @@
-# METHOD — v7 (post-audit-01 rec 3)
+# METHOD — v8 (maintenance run 2)
 
 *Nota (pt-BR): sétima versão. Origem: rec 3 da auditoria 01 — o passo
 10 do fluxo-alvo (recomendação de modelo e esforço no início da
@@ -12,6 +12,19 @@ genuinamente precisa de algo diferente do padrão); STEP 5a ganha a
 única interrupção de início de tarefa para o usuário apertar os
 botões — o modelo não consegue trocar modelo/esforço sozinho
 (verificado ao vivo em 2026-08-11). Nenhum outro passo mudou.*
+
+*Nota (pt-BR): oitava versão. Origem: mudança externa — rodada 2 de
+manutenção (`/my-method:update-method`, pesquisa em 2026-08-11,
+aplicada em 2026-08-12), defeito D-6 da proposta
+`notes/proposals/maintenance-2026-08-11.md`. O STEP 5a dizia "only the
+user can switch model or effort", mais largo do que a evidência
+sustenta: `code.claude.com/docs/en/model-config` (acessado em
+2026-08-11) lista seis formas de definir esforço, e uma delas é o
+frontmatter de uma skill ou de um subagente. O que só o usuário troca
+é o modelo/esforço DA SESSÃO — e é disso que o passo fala. Uma palavra
+mudou; nenhum comportamento do método mudou. Esta é a primeira revisão
+da classe **mudança externa**, distinta do atrito de piloto e das três
+exceções conscientes registradas acima.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -137,9 +150,9 @@ a) Tell the user in at most 6 lines which task this is and what will
    exist when it ends. If the card carries a `Model/effort:` line,
    state it in this same message — the exact values to type — and ask
    the user to set them before building starts: one interruption, at
-   the start, never mid-task. Only the user can switch model or
-   effort; if they decline or do not switch, build on the current
-   settings and do not raise it again.
+   the start, never mid-task. Only the user can switch the session's
+   model or effort; if they decline or do not switch, build on the
+   current settings and do not raise it again.
 b) Build it, narrating intent and consequence, never mechanics.
 c) VERIFY — not negotiable: **attempt automated verification first**;
    only say "verificação humana necessária" after a real attempt fails

@@ -6,11 +6,15 @@ questions.
 
 | Axis | Last checked | Run |
 |---|---|---|
-| A — Anthropic practices | 2026-08-11 | 1 (partial) |
-| B — Vulnerabilities | 2026-08-11 | 1 |
-| C — Skills and agents | 2026-08-10 | audit-02 (pre-ledger) |
-| D — Models and mechanisms | 2026-08-11 | 1 |
-| E — Open sweep | — | never run |
+| A — Anthropic practices | 2026-08-11 | 2 (first full sweep) |
+| B — Vulnerabilities | 2026-08-11 | 2 |
+| C — Skills and agents | 2026-08-11 | 2 |
+| D — Models and mechanisms | 2026-08-11 | 2 |
+| E — Open sweep | 2026-08-11 | 2 (one-day window) |
+
+The dates above are the RESEARCH date (2026-08-11), not the apply date
+(2026-08-12). The next run's "since when" is what was actually read,
+not when it was written down.
 
 ---
 
@@ -119,3 +123,269 @@ recorded so nobody re-derives them:
   `notes/research-maintenance/sources-baseline.md` and 9 in
   `cli-mechanics.md`, which stay in those files rather than being
   copied here.
+
+---
+
+## 2026-08-12 — run 2 (first real run of the command)
+
+Research ran 2026-08-11 (five subagents, five files,
+`notes/research-maintenance/2026-08-11-axis-{A..E}.md`); the proposal
+`notes/proposals/maintenance-2026-08-11.md` was written 2026-08-12 and
+applied the same day. The session that delegated the research died
+before writing the proposal, so the five-line summaries were lost and
+the axis files were read in full — the friction that produced C-8.
+
+**Axes covered, with windows:**
+
+- **A — full, first time.** Lower bound 2026-08-10. 12 watchlist rows
+  re-checked. One additive change; two recipe defects.
+- **B — full.** Lower bound 2026-08-11. One real breakage (D-1), one
+  false claim retired, two carried-forward items closed.
+- **C — full.** Lower bound 2026-08-10 (audit-02). Nothing to install;
+  six triggers re-read; no renames in the official catalog.
+- **D — full.** Lower bound 2026-08-11. Zero dead models; one citation
+  defect (D-2).
+- **E — full but nearly worthless.** Lower bound 2026-08-10, this
+  repository's first commit — a one-day window. **Zero candidates.**
+  The axis's own words: *"A negative result over one day is worth
+  almost nothing as evidence that the method is current; it is worth
+  something only as a lower bound the next run can start from."* Its
+  real value is giving run 3 a lower bound of 2026-08-11.
+
+**Applied** (plugin 0.2.0 → 0.3.0, method v7 → **v8**):
+
+- **D-1** — `gitleaks git -s .` → `gitleaks git .` in
+  `playbook/SECURITY-MATRIX.md` row 8.1 and its embedded copy in
+  `start-project.md`. `-s`/`--source` exists only on the deprecated
+  `detect`/`protect` subcommands; `git` takes the path positionally.
+  The row was wrong from the day it was written, and it is the row
+  that enforces "no credential in a versioned file".
+- **D-2** — the fabricated `/model` quotation removed from
+  `CHANGELOG.md` and `notes/proposals/method-v7-model-effort-proposal.md`,
+  replaced by the structural evidence that does exist.
+- **D-3** — two watchlist recipes and the `update-method` axis-D
+  delegation stopped hunting for that non-existent sentence.
+- **D-4** — the changelog recipes (axes A and E) now cross-check
+  GitHub Releases and tolerate either markup.
+- **D-5** — the headless recipe now reads the `<Note>` announcing that
+  `--bare` will become the default for `-p`.
+- **D-6** — `method.md` STEP 5a: "the user can switch **the session's**
+  model or effort". Triggered the v8 bump and the `friction.md`
+  provenance entry.
+- **C-2** — the Semgrep coverage boundary recorded in
+  `research/13-testing-strategy.md` (new section) and in the matrix's
+  HONESTY list, with a new `[^semgrep2025]` source.
+- **C-3** — the watchlist's third preamble rule: check the
+  *invocation*, not just the project.
+- **C-4** — `start-project.md`'s planning half now says to prefer
+  `opus` over `fable` on security-triggered cards.
+- **C-7** — `claude-security` added to the axis-C DEFERRED table.
+- **C-8** — `update-method` Step 3 now says to fall back to the five
+  research files when the summaries did not survive the session.
+
+**Rejected, with the reason:**
+
+- **C-1 Betterleaks** — verified real, MIT, v1.7.4, same maintainers,
+  same CLI shape, low migration cost. **No anyway:** gitleaks v8.30.1
+  works and is not abandoned (frozen ≠ dead), Betterleaks is six
+  months old, and **detection parity was never measured** — that needs
+  both binaries and a corpus. Fix the string first; switch tools as a
+  separate, deliberate decision.
+- **C-5 `claude doctor` in health-check probe 1** — shipped 2026-07-08,
+  before this repo existed, so it fails axis E's "did not exist" test.
+  Makes about half of one probe out of five redundant. Default rule
+  applies: no.
+- **C-6 `STATE.md` vs auto memory** — auto memory does not obsolete
+  `STATE.md` (machine-local and not in git; Claude-curated; only the
+  first 200 lines of `MEMORY.md` load). The real observation is
+  narrower: the method never says which store owns a fact. Recorded,
+  not applied.
+- **D1-a `notes/audit-03-agents.md:36`** — left unedited. It quotes the
+  bad gitleaks string as a dated record of a past evaluation, nobody
+  executes an audit file, and this repo amends by recorded amendment
+  rather than rewrite.
+- **Probe 1 comparing version strings** (axis A's proposal) — refused.
+  Axis C was right and this ledger already says why: the install record
+  stays pinned while `plugin details` reads the source live, so a
+  version comparison would produce a permanent false alarm.
+
+**The user's answers to axis C's UNKNOWABLE-FROM-HERE triggers**
+(2026-08-12), which are the only way those triggers can be resolved:
+
+1. `frontend-design` — **NOT MET.** No user-facing-screens task on any
+   project since 2026-08-10.
+2. `webapp-testing` — **NOT MET.** No web-UI task reached verification,
+   and no `friction.md` anywhere records difficulty authoring Playwright
+   specs. Both halves fail.
+3. `playwright` MCP — **not applicable**, gated behind 2.
+4. `security-guidance` — **the tier half is now MET.** The user is
+   starting a project with login and other people's personal data
+   (T2). **Nothing was installed**: the recorded order says try
+   Semgrep-in-verify + the built-in `/security-review` first, and that
+   is the user's decision, not this run's. **Blocking fact for that
+   project: `semgrep` is not installed on this machine**, so the
+   AUTOMATED rows a T2 tier pulls in cannot run today. That is a
+   before-the-project fact, not a during-verification surprise.
+5. TDD staged stage — **NOT MET.** User agrees with the strict reading:
+   the 2026-08-11 pilot's simulated-persona "human" check is a
+   limitation of the test rig, not an observed wrong behaviour.
+
+`skill-creator` — **NOT MET**, answerable from here: no scheduled task,
+no eval mechanism anywhere in the repo.
+
+**SETTLED this run, moved out of NOT VERIFIED:**
+
+- Semgrep `owasp-top-ten` edition keying → **2025-keyed** (517 of 559
+  rules). The prior entry's "strong suspicion: 2021" was **wrong** and
+  is retired. The semantic gap it feared does not exist; a different
+  and real gap does (A03/A10 → 0 rules), now recorded in `research/13`.
+- Betterleaks → **verified real.** Created 2026-02-03, v1.7.4
+  (2026-08-10), 17 releases in ~6 months, MIT, not archived, 1,647
+  stars, maintained by the original gitleaks author, ships
+  sigstore-signed checksums. Migration shape confirmed compatible.
+- `claude plugin list --json`'s extra fields → **confirmed present**
+  (`scope`, `installPath`, `installedAt`, `lastUpdated`, `errors`).
+- Whether a plugin that failed to load is listed → **yes**, with an
+  `errors` array; the `my-method@skills-dir` entry is the proof.
+- **`${CLAUDE_EFFORT}` substitution inside a plugin `commands/*.md`
+  body → observed a second time**, in this apply session: the
+  `update-method.md` text arrived with `${CLAUDE_EFFORT}` already
+  expanded to the session's effort level. Two independent observations
+  now (probe P1 and this one). Still **not** contractually documented
+  for plugin `commands/`, so item 7 below stays open and the fallback
+  clause in `next-task.md:49-51` remains load-bearing.
+
+**CONFIRMED UNCHANGED** (recorded so run 3 does not re-derive it, all
+accessed 2026-08-11): every mechanism the commit gate depends on
+(`PreToolUse` "Can block it", `permissionDecision: "deny"`, plugin
+`hooks/hooks.json`, `disableAllHooks`); `disable-model-invocation` and
+`argument-hint`; `${CLAUDE_EFFORT}` in the substitutions table and
+`${CLAUDE_MODEL}` still absent; frontmatter `model:`/`effort:` still
+turn-scoped ("the session model resumes on your next prompt") — which
+is exactly why v7 refused them; `tools:` still an allowlist honoured
+for plugin agents, so `security-reviewer`'s read-only guarantee is
+still structural; local-path marketplaces still first-class; **zero
+dead models** — and the structural reason worth keeping is that this
+repo names only aliases, never a dated model ID, while
+`claude-opus-4-1-20250805` retired 2026-08-05; OWASP Top 10:2025 still
+current with all six cited cheat sheets resolving; npm's docs shelf
+still `/cli/v12/`; nothing to install (all six DEFERRED triggers
+re-read, none MET at research time); no renames affecting the five
+watched plugins (catalog 287, up from 285).
+
+Two method notes needing no action: **`max` effort is session-only**
+and v7's loop ends every task with `/clear`, so a card recommending
+`/effort max` does not survive to the next card, by design. And **the
+official marketplace catalog must be parsed, never summarized** — a
+summarizing fetch returned 221 plugins and three false "does not
+exist" verdicts against the same file the same day the raw parse
+returned 287. That is the most dangerous methodology trap found this
+run.
+
+**Where the subagents disagreed** — recorded rather than silently
+resolved: (1) whether probe 1 should compare version strings — axis C
+right, axis A wrong, resolved above; (2) what markup the docs changelog
+uses — axis A saw `##` headings, axis E saw `<Update label=…>` blocks,
+same URL, same day. Unresolved; the replacement recipe is written to
+work under either.
+
+**FOUND WHILE APPLYING, not by the research — open defect for run 3:**
+
+The apply-time mechanical check compares four canonical files against
+their embedded copies in `start-project.md`. Method (236/236) and
+matrix (213/213) came back at **0 divergences**. The two templates did
+not:
+
+- `kit/my-method/templates/CLAUDE.md` — 69/69 lines, **10 divergences**
+- `kit/my-method/templates/STATE.md` — 32/32 lines, **14 divergences**
+
+Both counts are **identical at `HEAD`**, so this run neither caused nor
+touched them. The drift is systematic rather than accidental: the files
+under `templates/` use HTML-comment placeholders
+(`<!-- One sentence: … -->`) while the copies `start-project` actually
+writes use angle-bracket placeholders (`<One sentence — …>`), and the
+angle-bracket versions carry cross-references the template files lack
+("same as SPEC.md's opening line").
+
+The open question, which needs a decision and not a patch: **no command
+in the kit reads `templates/` at all** — `grep -n "templates/"` over
+`kit/my-method/commands/*.md` returns nothing. `start-project` writes
+its embedded copies. So either the `templates/` directory is dead
+weight that `plugin details` counts and nothing uses, or it is the
+intended canonical source and `start-project` should read from it. Until
+that is decided, "canonical vs embedded" is not even well-defined for
+these two files, which is why this was NOT force-fixed here. It was out
+of the approved proposal's scope.
+
+**NOT VERIFIED, carried to run 3:**
+
+1. The exact error `gitleaks git -s .` produces. gitleaks is not
+   installed here. The load-bearing fact (no `-s` on the `git`
+   subcommand, in `master` and at `v8.30.1`) is verified from source;
+   the cobra message itself is inferred. **Test T1 of the proposal is
+   what would convert D-1 from documented to observed, and it did not
+   run** — it needs a third-party binary installed.
+2. Betterleaks' detection parity with gitleaks — never measured.
+3. The docs changelog's markup, and how far it lags Releases. One day
+   is not a pattern.
+4. Whether the four additions in the plugins-reference caching section
+   are new since 2026-08-10 or merely unquoted before. Recorded as
+   "present today", not "added".
+5. The date the `--bare`-will-become-default `<Note>` appeared. No
+   changelog entry mentions `--bare` at any version.
+6. Whether 2.1.228 contains anything relevant — no changelog entry
+   existed for it on 2026-08-11 though the binary shipped.
+7. Whether `${CLAUDE_EFFORT}` substitution is *contractually*
+   guaranteed inside plugin `commands/*.md` bodies. Now observed
+   twice; still never stated for plugin `commands/` by name.
+8. Whether Haiku 4.5 and Sonnet 4.5 support effort at all. Implied by
+   omission, never stated positively. A card naming an effort level
+   alongside `haiku` could be silently ineffective.
+9. Whether the `/model` "user-only" sentence ever existed. This run
+   proves only its absence today across three surfaces; Anthropic
+   publishes no docs-page history.
+10. Whether the 287 vs 285 marketplace delta is genuinely +2 net.
+11. The date `anthropics/claude-plugins-public` became `-official`. The
+    301 is live; its date is not exposed. Two catalog entries still
+    carry the old name in `homepage`.
+12. Whether auto memory is enabled for this repository.
+    `autoMemoryEnabled` was not read — that would mean reading outside
+    the project folder.
+13. Whether this account can run `claude-security` at all (needs
+    dynamic workflows; on Pro, enabled in `/config`). Not tested; the
+    standing rule forbids changing settings.
+14. Whether the installed 0.1.0 cache copy differs in content from the
+    kit. Axis C ran `diff -rq` and reports it does (1 command, 4
+    templates, no agent, no hook) — **the diff result is recorded as
+    fact, and the boundary question is flagged**: axis C read a
+    directory under the user's home to get it.
+15. OWASP Top 10:2025's publication date. Four surfaces exhausted;
+    recorded so run 3 does not repeat them.
+16. OWASP's next-revision plan. The ~4-year cadence pointing at ~2029
+    is an inference, not a published plan.
+17. Whether the stale "2025 Data Analysis Plan" text is current or
+    leftover.
+18. Whether Semgrep's OSS CLI has feature gaps versus Pro. No
+    capability matrix is published.
+19. Human-visible content of `semgrep.dev/p/owasp-top-ten` — still an
+    empty JS shell to a fetcher.
+20. Whether `docs.npmjs.com/cli/audit` is contractually pinned to the
+    current major. Two consistent observations, no contract.
+21. Whether `/hooks`, `/plugin`, `/skills` or `/context` produce output
+    in `-p` mode.
+22. The `${CLAUDE_PLUGIN_ROOT}`-in-command-markdown dispute (issue
+    #9354, open since 2025-10-11). The kit depends on it in
+    `hooks/hooks.json` only, where it is confirmed working.
+23. Which models this account can actually select. Documentation cannot
+    answer it; the `/model` picker can, interactively.
+24. **The blog post "Choosing a Claude model and effort level in Claude
+    Code"** (claude.com/blog/claude-model-and-effort-level-in-claude-code),
+    cited by `model-config.md` as the official guidance and directly
+    relevant to v7's triggers — **never opened.** Axis D calls it the
+    highest-value open item on that axis. Run 3 should start here.
+25. Whether a "Week 33" what's-new digest will cover Aug 10–14. Week 31
+    is missing from the index entirely, so the weekly series has a
+    known gap and is not complete coverage.
+26. Where `.claude/skills/my-method` lives — established as a *symlink*
+    into `kit/my-method`, so it cannot drift. The error is a name
+    collision, not a stale duplicate. Removing it is a user decision.

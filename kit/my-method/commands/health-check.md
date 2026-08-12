@@ -8,7 +8,7 @@ THIS session, before real work starts. This command is READ-ONLY: it
 writes no file, installs nothing, fixes nothing, changes no setting.
 If a probe fails you report it — you do not repair it.
 
-Last full maintenance run: 2026-08-11
+Last full maintenance run: 2026-08-12
 Kit inventory at that run: 6 skills, 1 agent, 1 hook
 
 Run the five probes below in order, then summarize. Show the RAW

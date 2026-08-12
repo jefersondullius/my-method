@@ -1,5 +1,82 @@
 # CHANGELOG
 
+## 2026-08-12 — manutenção rodada 2 aplicada: método v8, plugin 0.3.0, e a linha 8.1 volta a rodar
+
+Aplicada a proposta `notes/proposals/maintenance-2026-08-11.md` inteira,
+sem vetos, na ordem do `update-method` MODE 2. Seis defeitos e quatro
+candidatas; quatro candidatas recusadas com razão registrada.
+
+- **O defeito que importa: `gitleaks git -s .` nunca foi um comando
+  válido.** `-s`/`--source` só existe nos subcomandos `detect` e
+  `protect`, depreciados desde a v8.19.0; o `git` recebe o caminho como
+  argumento posicional. Quem seguisse a linha 8.1 da matriz ao pé da
+  letra digitava um comando que sai com erro e **não varre nada** — e a
+  8.1 é justamente a linha que faz valer "nenhuma chave em arquivo
+  versionado". Corrigido para `gitleaks git .` na matriz e na cópia
+  embutida do `start-project.md`. Não é regressão: estava errado desde
+  o dia em que foi escrito, e passou incólume pela linha de base porque
+  toda receita perguntava se a ferramenta estava viva e nenhuma
+  perguntava se ela ainda aceitava a string digitada.
+- **`method.md` → v8** (mudança externa, a primeira dessa classe): STEP
+  5a agora diz que só o usuário troca o modelo/esforço **da sessão**. A
+  frase antiga era mais larga que a evidência — a documentação lista
+  seis formas de definir esforço, e uma é frontmatter de skill/subagente
+  (que a v7 rejeitou de propósito, por valer só um turno). Nenhum
+  comportamento mudou. Proveniência em `friction.md`.
+- **Uma citação fabricada foi retirada.** O CHANGELOG e a proposta da v7
+  atribuíam à documentação a frase `/model` "can only be invoked by the
+  user, not by the model itself". Ela **não existe**: 0 ocorrências nas
+  três superfícies checadas, incluindo os 7,1 MB do `llms-full.txt`
+  inteiro. A conclusão da v7 continua de pé e agora se apoia na
+  evidência real — a tabela de comandos marca com `[Skill]` exatamente
+  as entradas que o Claude invoca sozinho, e nem `/model` nem `/effort`
+  carregam a marca. Duas receitas da watchlist mandavam confirmar a
+  frase inexistente; corrigidas, junto com a delegação do eixo D.
+- **Fronteira de cobertura do Semgrep, registrada** em
+  `research/13-testing-strategy.md` (seção nova) e na seção HONESTY da
+  matriz: o ruleset `p/owasp-top-ten` **é** 2025 (517 de 559 regras),
+  derrubando a "suspeita forte: 2021" do livro-caixa — mas `A10:2025` e
+  "Software Supply Chain Failures" aparecem em **zero** regras. Rodada
+  limpa do Semgrep não quer dizer "Top 10 de 2025 coberto".
+- **Cartões de segurança devem preferir `opus` a `fable`.** Pedidos
+  marcados como de cibersegurança são reexecutados no Opus 4.8, então
+  `fable` cai **abaixo** do que `opus` resolve — recomendar o modelo de
+  nome mais forte entregava o resultado mais fraco, bem no gatilho UP.
+- **Watchlist**: terceira regra do preâmbulo (checar a *invocação*, não
+  só o projeto — a regra que teria pego a 8.1), receitas do changelog
+  agora cruzam com o GitHub Releases (a doc estava uma versão atrás),
+  receita do headless agora lê o `<Note>` que anuncia `--bare` como
+  futuro padrão do `-p` (o que quebraria as sondas 1 e 3 do health-check
+  em silêncio), e `claude-security` entra na lista DEFERRED.
+- **`update-method` aprendeu a sobreviver à própria morte:** o passo 3
+  agora manda cair nos cinco arquivos de pesquisa quando os resumos de
+  cinco linhas não sobreviveram à sessão. Foi exatamente o que
+  aconteceu nesta rodada.
+- **Recusadas, com razão no livro-caixa:** Betterleaks (real, MIT, mesmos
+  mantenedores — mas paridade de detecção nunca foi medida e o gitleaks
+  não está morto), `claude doctor` na sonda 1, a questão STATE.md vs
+  memória automática, e comparar números de versão na sonda 1 (daria
+  alarme falso permanente, como o livro-caixa já registrava).
+
+Checagem mecânica pós-edição: **método 236 linhas, matriz 213 — 0
+divergências** contra as cópias embutidas; `claude plugin validate`
+com `✔ Validation passed`; inventário do kit inalterado (6 comandos, 1
+agente, 1 hook). **Achado novo, encontrado pela checagem e não pela
+pesquisa:** os dois templates embutidos (`CLAUDE.md`, `STATE.md`)
+divergem dos arquivos em `kit/my-method/templates/` em 10 e 14 linhas —
+contagem **idêntica no HEAD**, ou seja, anterior a esta mudança e não
+causada por ela. Nenhum comando do kit lê `templates/`, então antes de
+corrigir é preciso decidir qual das duas cópias é a canônica. Registrado
+como defeito aberto para a rodada 3.
+
+Rodada 2 também respondeu, com o usuário, os cinco gatilhos que não são
+observáveis daqui: quatro NOT MET, e **`security-guidance` com a metade
+do tier agora MET** — há um projeto T2 (login + dados pessoais de
+terceiros) começando. Nada foi instalado: a ordem registrada manda
+tentar Semgrep no verify + `/security-review` embutido primeiro. Fato
+que bloqueia esse projeto hoje: **`semgrep` não está instalado nesta
+máquina.**
+
 ## 2026-08-11 — testes da manutenção: T1–T5 e T8 PASSARAM, T4 fechou uma dúvida antiga
 
 Seis testes da proposta, cada um em sessão nova headless com o plugin
@@ -126,10 +203,18 @@ Testes: registrados em entrada própria, acima desta.
 
 Aplicada a proposta `notes/proposals/method-v7-model-effort-proposal.md`
 na ordem dela — o passo 10 do fluxo-alvo, o último ABSENT da audit-01,
-sai de ABSENT para L3 + L4. Esse é o teto estrutural: `/model` "can
-only be invoked by the user, not by the model itself"
-(code.claude.com/docs/en/commands.md, verificado ao vivo em
-2026-08-11); nem hook enxerga comandos embutidos.
+sai de ABSENT para L3 + L4. Esse é o teto estrutural: `/model` é um
+built-in, e "a command is only recognized at the start of your
+message"; a tabela de comandos marca com `[Skill]` exatamente as
+entradas que o Claude pode invocar sozinho, e nem `/model` nem
+`/effort` carregam essa marca (code.claude.com/docs/en/commands.md,
+reverificado em 2026-08-11); nem hook enxerga comandos embutidos.
+*(Correção de 2026-08-12: a redação anterior citava como aspas
+literais uma frase — "can only be invoked by the user, not by the
+model itself" — que não existe em página nenhuma da documentação; 0
+ocorrências no corpo inteiro `llms-full.txt`. A conclusão continua
+válida, agora apoiada na evidência que existe de fato. Ver
+`notes/proposals/maintenance-2026-08-11.md` D-2.)*
 
 - `method.md` → **v7**: STEP 4 ganha a regra do silêncio — linha
   `Model/effort: <modelo> + <esforço> — <razão>` dentro de "Does it

@@ -28,6 +28,14 @@ not own. Do not scan, fuzz, or load-test a third party's endpoint even
   `research/13-testing-strategy.md` ("what an LLM-driven review can
   and cannot establish") before trusting a clean REVIEW result more
   than it deserves.
+- A clean `semgrep --config p/owasp-top-ten` run does NOT mean "the
+  2025 Top 10 is covered". The ruleset is 2025-keyed — 517 of its 559
+  rules carry a 2025 code — but `A10:2025` (Mishandling of Exceptional
+  Conditions) appears in **zero** of them, and not one rule mentions
+  Software Supply Chain Failures (`A03:2025`)[^semgrep2025]. Those are
+  exactly the two categories a code-pattern scanner cannot see. Row
+  10.1 (`npm audit` / `pip-audit`) covers part of A03's ground;
+  nothing in this matrix covers A10.
 - The goal is narrower and more honest than "secure": catch the
   mistakes that are common, cheap to check, and expensive to ship.
 
@@ -162,7 +170,7 @@ that fixed it, and never by the reviewer invocation that found it.
 
 | # | Required check | How it is performed | Pass criterion | Fix direction |
 |---|---|---|---|---|
-| 8.1 | No key, password, or token appears in a file tracked by git | **AUTOMATED** — `gitleaks git -s .` (scans full git history, not just the working tree)[^gitleaks], run before the first push and before every subsequent push. | Zero findings. | Rotate the credential NOW (history rewrite alone is not enough), move it to an env var, then scrub history. |
+| 8.1 | No key, password, or token appears in a file tracked by git | **AUTOMATED** — `gitleaks git .` (scans full git history, not just the working tree)[^gitleaks], run before the first push and before every subsequent push. | Zero findings. | Rotate the credential NOW (history rewrite alone is not enough), move it to an env var, then scrub history. |
 | 8.2 | `.env` (or equivalent secret file) is listed in `.gitignore` before it is ever created | **AUTOMATED** — a command checks `.gitignore` contains the env-file pattern; fails if the file is tracked. | Check passes. | Add the pattern to `.gitignore` and untrack the file (`git rm --cached`). |
 | 8.3 | Development and production use different secrets (a leaked dev key cannot touch production data) | **HUMAN DECISION** — "As chaves/segredos do ambiente de desenvolvimento são diferentes das chaves de produção?" | Jeferson answers yes, or separates them before shipping. | Issue separate production secrets; a dev key never touches prod. |
 
@@ -191,7 +199,8 @@ that fixed it, and never by the reviewer invocation that found it.
 ## Sources
 
 [^semgrep]: [Semgrep — `p/owasp-top-ten` ruleset](https://semgrep.dev/p/owasp-top-ten), accessed 2026-08-10.
-[^gitleaks]: [gitleaks/gitleaks — README](https://github.com/gitleaks/gitleaks), accessed 2026-08-10.
+[^semgrep2025]: [Semgrep — `p/owasp-top-ten` config endpoint](https://semgrep.dev/c/p/owasp-top-ten), accessed 2026-08-11 — the whole ruleset (1,448,110 bytes) parsed: 559 rules, 517 carrying a 2025 code, 0 matching `A10:2025`, 0 mentioning "Software Supply Chain Failures".
+[^gitleaks]: [gitleaks/gitleaks — README](https://github.com/gitleaks/gitleaks), accessed 2026-08-11.
 [^password]: [OWASP Cheat Sheet Series — Password Storage](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html), accessed 2026-08-10.
 [^idor]: [OWASP Cheat Sheet Series — Insecure Direct Object Reference Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html), accessed 2026-08-10.
 [^fileupload]: [OWASP Cheat Sheet Series — File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html), accessed 2026-08-10.
