@@ -95,16 +95,52 @@ pointing at another file):
 | verify.ps1 skeleton | lines 832–864 | 33 | ~350 | no standalone template file exists anywhere else in the repo |
 | **Sum of the four** | | **643** | **~10,278** | **72% of body lines / 79% of body chars** |
 
-**Finding (measurement, not recommendation): `kit/my-method/templates/` appears orphaned.**
-`start-project.md` contains zero occurrences of the string `"templates"` and never reads
-`kit/my-method/templates/*.md` by path. It carries its own, separately-authored inline blocks
-that produce structurally similar but **not byte-identical** output (e.g. the template's
-`CLAUDE.md` uses `<!-- ... -->` placeholders, the inline block uses `<...>` placeholders).
-The two copies (template file vs. inline block) are kept in sync by hand via
-`update-method.md`, not by a live read. So roughly four-fifths of `start-project.md`'s
-character count is literal copies of other canonical files, not start-project-specific
-orchestration prose — and one of those "canonical" sources (`templates/`) is not actually
-consulted at runtime at all.
+**Finding, first-order — not just cost, correction-blindness risk: `kit/my-method/templates/`
+is orphaned, and the two copies have already diverged.** `start-project.md` contains zero
+occurrences of the string `"templates"` and never reads `kit/my-method/templates/*.md` by
+path. It carries its own, separately-authored inline blocks that produce structurally similar
+but **not byte-identical** output (e.g. the template's `CLAUDE.md` uses `<!-- ... -->`
+placeholders, the inline block uses `<...>` placeholders). This is not hypothetical: the
+apply-time mechanical check run during the `update-method` maintenance pass on 2026-08-12
+(`notes/maintenance/LAST-CHECK.md`, "FOUND WHILE APPLYING") already found real drift —
+`kit/my-method/templates/CLAUDE.md` (69/69 lines) has **10 divergences** from the copy
+`start-project.md` actually writes, and `templates/STATE.md` (32/32 lines) has **14**. That
+entry left the question open ("no command in the kit reads `templates/` at all... so either
+the directory is dead weight or it is the intended canonical source"). The risk this creates:
+**someone edits `templates/CLAUDE.md` believing they've fixed something, ships it, and no
+project ever receives the fix** — because `start-project.md` never reads that file. The
+inverse is just as real: someone edits the inline block inside `start-project.md` and
+`templates/` silently keeps drifting further, so anyone who *does* open `templates/` (to
+understand the format, or because a future command starts reading it) sees stale content.
+
+**Which copy should be canonical: `kit/my-method/templates/*.md`, not the inline blocks —
+for two reasons, both drawn from this repo's own existing pattern, not a new opinion:**
+
+1. **Consistency with how the other two embeds already work.** `method.md` and
+   `SECURITY-MATRIX.md` follow exactly this shape today — a dedicated, single-purpose
+   canonical file at a stable path, with `start-project.md` carrying a byte-for-byte embedded
+   copy that `update-method`'s apply-time check mechanically diffs against the canonical file
+   (method and matrix both came back at 0 divergences in the same run that found the template
+   drift). The check *already treats `templates/` as the canonical side of that same
+   comparison* for `CLAUDE.md` and `STATE.md` — it reports "divergences from templates/",
+   not the reverse. Declaring the inline blocks canonical instead would mean rewriting that
+   check's direction, against a convention the kit has already committed to twice.
+2. **A dedicated file is the reviewable unit.** A one-artifact-per-file layout
+   (`templates/CLAUDE.md`, `templates/STATE.md`, ...) is something a human or a future
+   automated check can diff, version, and read in isolation. An inline block buried at a
+   specific line range inside an 897-line command file is not — finding it at all required a
+   full read of `start-project.md` in this session.
+
+**One thing a naive fix would break, worth flagging before anyone acts on this:** the current
+embedded blocks are not strictly worse copies — per LAST-CHECK, "the angle-bracket versions
+carry cross-references the template files lack" (e.g. pointing back to SPEC.md's opening
+line). Making `templates/` canonical by simply overwriting it with the embedded blocks, or
+making `start-project.md` read `templates/` as-is today, would each lose real content one
+side has and the other doesn't. Reconciling the two — carrying the embedded blocks' extra
+cross-references into `templates/`, *then* pointing `start-project.md` at `templates/` — is
+the shape of a correct fix, not something this measurement session is doing (out of scope per
+this session's own rules: measure, don't build). Recorded here so the next session that picks
+this up doesn't have to re-derive it.
 
 ---
 
@@ -252,6 +288,12 @@ an estimate.
 3. **`method.md` written into every project (~3,120 tok) but never read again by any
    command** — pure write cost with no measured read-side return within the kit's own flows.
 
-Side finding (measurement, not recommendation): `kit/my-method/templates/*.md` is not
-referenced by `start-project.md` at all — it appears to be an orphaned, hand-synced duplicate
-of the inline blocks that actually ship.
+**Elevated finding, first-order (not just cost — see section b):** `kit/my-method/templates/*.md`
+is not referenced by `start-project.md` at all, and the two copies have already diverged for
+real (`CLAUDE.md` 10 lines, `STATE.md` 14 lines, per `notes/maintenance/LAST-CHECK.md`). This
+is correction-blindness risk: a fix applied to the unread copy never reaches a project.
+`templates/*.md` should be the canonical side (matches how `method.md` and
+`SECURITY-MATRIX.md` already work in this kit); the embedded blocks currently carry extra
+content (cross-references) that must be preserved, not discarded, when reconciling. See
+section (b) for the full reasoning — recorded for the next session to act on, not acted on
+here.
