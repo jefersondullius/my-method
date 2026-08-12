@@ -523,3 +523,28 @@ general, or specific to this kit's shape — one plugin was checked, not
 the mechanism in the abstract. A future plugin with components that do
 NOT carry `disable-model-invocation: true` should not assume the same
 discount applies.
+
+---
+
+## 2026-08-12 — `notes/proposals/audit-04-cost-fixes-2026-08-12.md` applied
+
+Plugin 0.3.0 → 0.3.1. All three items approved and applied as written,
+no changes from the proposed text:
+
+- `kit/my-method/hooks/hooks.json` — added `"if": "Bash(git commit*)"`
+  to the `PreToolUse` handler. The proposal's own open caveat stands
+  uncorrected because nothing in this kit's command bodies needs it
+  today: `grep -rn "git commit" kit/my-method/commands/*.md` shows every
+  commit instruction is bare `git commit`, never `-C`-prefixed. If a
+  future task ever commits through a wrapper or a different working
+  directory, this scope should be re-checked before trusting the gate
+  fires.
+- `kit/my-method/commands/next-task.md` — removed the clause `, never
+  mechanics ("agora vou abrir o arquivo")` from section (c); the
+  narrate-intent-and-consequence instruction stays.
+- `notes/maintenance/WATCHLIST.md` — added Axis F, one row: revisit
+  `PLAN.md`'s uncapped growth when a real project reaches 30 completed
+  tasks.
+
+CHANGELOG entry: same date, "auditoria de custo (sessão 4/4) aplicada:
+plugin 0.3.1".

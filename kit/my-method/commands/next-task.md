@@ -62,7 +62,7 @@ adjust it here with one stated line of reasoning — never silently.
 Build exactly what the card describes under "What concretely exists
 when this is done" — nothing more, nothing the card did not ask for.
 Narrate intent and consequence as you go ("isto existe para que X
-funcione"), never mechanics ("agora vou abrir o arquivo").
+funcione").
 
 ## d) Verify — non-negotiable
 

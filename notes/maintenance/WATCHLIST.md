@@ -93,3 +93,14 @@ command, template or file it targets, or it is discarded.
 | Claude Code GitHub Releases | https://api.github.com/repos/anthropics/claude-code/releases/latest | Same | Cheapest version probe: one JSON object with `tag_name` and `published_at` |
 | Anthropic news | https://www.anthropic.com/news | Same | Read post titles + dates until you pass the window. **Company/policy/safety skew** |
 | Claude blog | https://claude.com/blog | Same | Read post titles + dates until you pass the window. **Product/how-to skew — a SEPARATE feed from anthropic.com/news, confirmed 2026-08-11; checking one misses about half** |
+
+## Axis F — Kit-internal cost items with a deferred revisit trigger
+
+Not external sources; these rows are for design questions a past audit
+found real but decided not to fix without more evidence. Re-check means
+"has the trigger condition been met — if so, this needs a real design
+session," not "re-fetch a URL."
+
+| Item | Origin | Trigger | Observable from this repo? |
+|---|---|---|---|
+| `PLAN.md` unconditional full-file read, no line cap (unlike `STATE.md`'s 80-line cap) | `notes/audit-04-cost-waste.md` item 1, `notes/audit-04-cost-plan.md` item 4 (2026-08-12) | Any real project's `PLAN.md` reaches **30 completed tasks** — a round number inside the linear-growth range already measured (ESTIMATIVA +700–900 tok by task 20; a 100-task project projected at ~5x that) | **Yes** — `PLAN.md`'s own line count / task-row count is readable directly from the project's repo, no other project's data needed |

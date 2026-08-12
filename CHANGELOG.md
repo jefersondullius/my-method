@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## 2026-08-12 — auditoria de custo (sessão 4/4) aplicada: plugin 0.3.1
+
+Aplicada a proposta `notes/proposals/audit-04-cost-fixes-2026-08-12.md`,
+os três itens "FAZER AGORA" da auditoria de custo que ainda faltavam
+(o primeiro — o teste `/context` — já tinha sido rodado e registrado
+direto no livro-caixa, sem precisar de proposta, porque não mudava
+nada no kit).
+
+- **`hooks.json` ganhou o campo `if`, restrito a `git commit`.** O hook
+  `verify-gate.ps1` parava um `powershell.exe` novo a cada chamada
+  Bash/PowerShell só para responder "pode" na maioria delas — agora só
+  dispara quando o comando começa com `git commit`. Economia é de
+  latência (~296ms por chamada evitada, medido), não de tokens; a
+  lógica do gate não mudou, e nada que hoje chega até ela deixa de
+  chegar.
+- **A regra de narração parou de se repetir pela terceira vez em
+  `next-task.md`.** O `CLAUDE.md` global e o `CLAUDE.md` que todo
+  projeto recebe do `start-project` já carregam a mesma regra
+  automaticamente, na mesma sessão, sem `/clear` entre as duas cargas
+  — a terceira cópia não tinha fronteira de sessão para justificar.
+- **Watchlist ganhou o Eixo F**: um gatilho observável ("`PLAN.md`
+  chegar a 30 tarefas concluídas") para revisitar o único custo desta
+  auditoria sem teto — o `PLAN.md` cresce uma linha por tarefa e,
+  diferente do `STATE.md`, não tem limite de linhas. Nada foi mudado no
+  comportamento hoje; é só um lembrete que sobrevive ao `/clear`.
+- **Não aplicado, por decisão explícita da auditoria:** os ~457 tokens
+  "always-on" que `claude plugin details` reportava para os seis
+  comandos do plugin **não são reais** — um teste `/context` numa
+  sessão nova, antes de invocar qualquer comando, mostrou que nenhum
+  dos seis aparece na tabela de Skills (todos usam
+  `disable-model-invocation: true`, que os exclui do índice de
+  contexto inteiramente). Só o agente `security-reviewer` custa algo
+  de fato, ~79 tokens — o mesmo valor que já constava, nunca
+  contestado. Registrado em `notes/maintenance/LAST-CHECK.md`, entrada
+  T2 (2026-08-12).
+
 ## 2026-08-12 — manutenção rodada 2 aplicada: método v8, plugin 0.3.0, e a linha 8.1 volta a rodar
 
 Aplicada a proposta `notes/proposals/maintenance-2026-08-11.md` inteira,
