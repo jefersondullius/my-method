@@ -319,12 +319,9 @@ of the approved proposal's scope.
 
 **NOT VERIFIED, carried to run 3:**
 
-1. The exact error `gitleaks git -s .` produces. gitleaks is not
-   installed here. The load-bearing fact (no `-s` on the `git`
-   subcommand, in `master` and at `v8.30.1`) is verified from source;
-   the cobra message itself is inferred. **Test T1 of the proposal is
-   what would convert D-1 from documented to observed, and it did not
-   run** — it needs a third-party binary installed.
+1. ~~The exact error `gitleaks git -s .` produces.~~ **SETTLED
+   2026-08-12** — see the entry below; gitleaks v8.30.1 was installed
+   and test T1 run.
 2. Betterleaks' detection parity with gitleaks — never measured.
 3. The docs changelog's markup, and how far it lags Releases. One day
    is not a pattern.
@@ -389,3 +386,43 @@ of the approved proposal's scope.
 26. Where `.claude/skills/my-method` lives — established as a *symlink*
     into `kit/my-method`, so it cannot drift. The error is a name
     collision, not a stale duplicate. Removing it is a user decision.
+
+---
+
+## 2026-08-12 — T1 executed (ad-hoc, outside a maintenance run)
+
+Not a run of `/my-method:update-method`; the user installed the three
+tools the matrix assumes exist (semgrep, gitleaks, pip-audit) and asked
+for proposal test T1 to be run once gitleaks was in place. Recorded
+here because it settles NOT VERIFIED item 1 above.
+
+**Installed:** semgrep 1.172.0 (via pipx, official quickstart at
+`docs.semgrep.dev/getting-started/quickstart`), gitleaks 8.30.1
+(official Windows release binary from
+`github.com/gitleaks/gitleaks/releases`, no winget/scoop path is
+documented by the project itself), pip-audit (via pip, official
+`pypa/pip-audit` README) — all installed 2026-08-12, this machine only.
+
+**T1 result — D-1 moves from documented to observed:**
+
+```
+$ gitleaks git .
+...
+1:01AM INF 33 commits scanned.
+1:01AM INF scanned ~846844 bytes (846.84 KB) in 407ms
+1:01AM INF no leaks found
+exit code: 0
+
+$ gitleaks git -s .
+Error: unknown shorthand flag: 's' in -s
+Usage:
+  gitleaks git [flags] [repo]
+...
+exit code: 1
+```
+
+Both halves confirmed exactly as predicted: `gitleaks git .` (the
+corrected row 8.1 string) runs clean, `gitleaks git -s .` (the old,
+wrong string) fails with an unknown-flag error. `SECURITY-MATRIX.md`
+row 8.1 is now AUTOMATED and runnable on this machine, not just
+theoretically correct.
