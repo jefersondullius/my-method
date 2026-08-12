@@ -142,6 +142,74 @@ the shape of a correct fix, not something this measurement session is doing (out
 this session's own rules: measure, don't build). Recorded here so the next session that picks
 this up doesn't have to re-derive it.
 
+### Is the embedding itself (cost #1 and #2) a forced consequence of a real boundary, or a choice?
+
+The two threads — cost (this section) and canonical source (previous subsection) — turn out to
+be the same question asked twice: **could `start-project.md` avoid embedding `method.md` and
+`SECURITY-MATRIX.md` literally by having Claude *read* them from the plugin's own install
+directory at write time instead?** If yes, cost items #1 and #2 (~3,278 + ~5,548 = ~8,826
+tokens) are a removable design choice. If no, they are a floor, and the conversation the user
+asked for — "is this necessary, or does an alternative exist" — has a real answer either way.
+
+**Finding: it is currently forced, by a documented-but-contested platform gap, not a choice
+this kit made carelessly.** Two separate mechanisms would each have to work for a
+read-instead-of-embed alternative to exist, and neither is confirmed for this kit's exact
+shape:
+
+1. **`${CLAUDE_PLUGIN_ROOT}` substitution inside a command's own markdown *prompt text*** —
+   the only way `start-project.md` could even name the path to
+   `kit/my-method/templates/CLAUDE.md` or the repo's canonical `method.md` at runtime, since a
+   plugin's installed location is an opaque, versioned cache path
+   (`~/.claude/plugins/cache/...`), not something the command can know without it.
+   `notes/research-maintenance/cli-mechanics.md` §7 (sources:
+   <https://code.claude.com/docs/en/plugins-reference#environment-variables>, accessed
+   2026-08-11; GitHub issue
+   [#9354](https://github.com/anthropics/claude-code/issues/9354), open since 2025-10-11)
+   found this **documented-but-contested**: the docs assert it resolves "anywhere the
+   placeholder appears" in skill/agent content, but #9354 remains open claiming it does not,
+   for command markdown specifically — and the research narrows the open gap further, to
+   `disable-model-invocation: true` commands (per issue #44057's repro), which is **the exact
+   frontmatter flag all six of this kit's commands use**, `start-project.md` included. Every
+   *other* `${CLAUDE_PLUGIN_ROOT}` gap adjacent to #9354 (statusLine, MCP `headersHelper`,
+   hook-execution injection, the Windows/Cowork case) has since closed — only the
+   command-markdown one, in this kit's own invocation shape, remains open and unresolved.
+   `notes/maintenance/LAST-CHECK.md`'s own NOT VERIFIED list (item 22) already flags this as
+   never empirically tested inside a command body for this kit — only confirmed working in
+   `hooks/hooks.json`, a different mechanism (§7's own table: hook commands substitute, but
+   that is a distinct row from skill/agent content).
+2. **Even granting (1), reading the file into the model's context to copy it out (Read tool,
+   then Write tool) does not avoid the token cost — the full content still has to pass through
+   context once to be written.** The only mechanism that would avoid the cost entirely is a
+   shell-level copy (`Copy-Item`/`cp`) that never touches the model's context — but the docs
+   are explicit that `${CLAUDE_PLUGIN_ROOT}` "is exported as environment variables to **hook
+   processes and to MCP and LSP server subprocesses**" (same source as above) — not to an
+   ordinary Bash/PowerShell tool call a command's own prompt text asks the model to run mid-
+   session. That path is unconfirmed in either direction; nothing in this repo's research has
+   tested it.
+
+**So: no working alternative is currently confirmed to exist, and the one alternative that
+*would* actually save tokens (shell-level copy) depends on a mechanism this kit has never
+tested and the docs don't extend to this use case. Given that, the framing the user asked
+for is the right one: this is not about eliminating the duplication — it may not be eliminable
+today — it is about making it cheap to keep correct.** Concretely, "cheap to keep correct"
+already has a working, low-cost mechanism in this kit: the apply-time mechanical diff check
+inside `update-method` that already caught the `CLAUDE.md`/`STATE.md` drift (LAST-CHECK,
+2026-08-12) is itself near-zero additional token cost (a line-count diff, not a content
+re-embed) and already covers all four artifacts — it just was not, in that run, given the
+authority to force a fix, only to report one (LAST-CHECK: "NOT force-fixed here... out of the
+approved proposal's scope"). The gap this measurement session surfaces is not "duplication
+exists" (forced, per above) but **"the drift-detector that already exists found real drift and
+nothing closed the loop"** — that is a process question for a future session, not a cost
+question, and not something this measurement session is deciding or building.
+
+**One cheap, concrete next step this session is not taking (recording it, not doing it):** the
+disputed mechanism in (1) has never actually been tested for this kit's own command shape —
+only inferred from docs and issue trackers. A single empirical test, in the same spirit as the
+2026-08-11 T4 test that settled the live-read-vs-frozen-cache question, would tell whether
+`disable-model-invocation: true` command markdown in *this* kit gets `${CLAUDE_PLUGIN_ROOT}`
+substituted or not — and would turn "documented-but-contested, ESTIMATIVA" into a measured
+fact for this specific repo, one way or the other.
+
 ---
 
 ## c) Cost of what start-project writes into each project
