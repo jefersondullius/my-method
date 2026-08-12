@@ -426,3 +426,100 @@ corrected row 8.1 string) runs clean, `gitleaks git -s .` (the old,
 wrong string) fails with an unknown-flag error. `SECURITY-MATRIX.md`
 row 8.1 is now AUTOMATED and runnable on this machine, not just
 theoretically correct.
+
+---
+
+## 2026-08-12 — T2 executed (ad-hoc, outside a maintenance run)
+
+Not a run of `/my-method:update-method`; settles session 3 of the cost
+audit's Target 2 (`notes/audit-04-cost-guidance.md` lines 237–284) —
+whether the ~457-token "Always-on" figure `claude plugin details
+my-method` reports (session 1, section a) is the real per-session
+context cost of the six my-method commands, or an overestimate that
+does not account for `disable-model-invocation: true`, which all six
+already carry.
+
+**Method:** `claude -p "/context" --output-format text`, a fresh
+non-interactive session, before invoking any of the plugin's six
+commands. Raw output:
+
+```
+## Context Usage
+
+**Model:** claude-sonnet-5
+**Tokens:** 28.2k / 967k (3%)
+
+### Estimated usage by category
+
+| Category | Tokens | Percentage |
+|----------|--------|------------|
+| System prompt | 9.2k | 0.9% |
+| System tools | 16.5k | 1.7% |
+| System tools (deferred) | 16.2k | 1.7% |
+| Custom agents | 79 | 0.0% |
+| Memory files | 537 | 0.1% |
+| Skills | 1.9k | 0.2% |
+| Messages | 8 | 0.0% |
+| Free space | 905.8k | 93.7% |
+| Autocompact buffer | 33k | 3.4% |
+
+### Custom Agents
+
+| Agent Type | Source | Tokens |
+|------------|--------|--------|
+| my-method:security-reviewer | Plugin | 79 |
+
+### Skills
+
+| Skill | Source | Tokens |
+|-------|--------|--------|
+| dataviz | Built-in | ~380 |
+| update-config | Built-in | ~240 |
+| keybindings-help | Built-in | ~80 |
+| code-review | Built-in | ~270 |
+| simplify | Built-in | ~60 |
+| fewer-permission-prompts | Built-in | ~60 |
+| loop | Built-in | ~120 |
+| schedule | Built-in | ~130 |
+| claude-api | Built-in | ~360 |
+| run | Built-in | ~120 |
+| init | Built-in | ~20 |
+| security-review | Built-in | ~30 |
+```
+
+(Memory Files table omitted above — unrelated to this test.)
+
+**Result — SETTLED:** none of the six my-method skills (`friction`,
+`health-check`, `next-task`, `start-project`, `update-method`,
+`where-am-i`) appear anywhere in the "Skills" table. Every row listed
+there is **Built-in** (Claude Code's own), none **Plugin**-sourced.
+The only my-method component present anywhere in the breakdown is the
+plugin's one **agent**, `my-method:security-reviewer`, at 79 tokens
+(Custom Agents table) — consistent with session 1's own separate ~70-
+token estimate for that one component, which was never in dispute.
+
+**Conclusion:** `disable-model-invocation: true` excludes a command's
+description from a session's startup context entirely for
+plugin-sourced commands, exactly as `code.claude.com/docs/en/context-
+window.md` (accessed 2026-08-12, cited in session 3) documents for
+project-root skills. The ~457-token "Always-on" figure `claude plugin
+details my-method` reports is a **static per-component estimate that
+does not account for the flag** — it overstates the real per-session
+cost of the six commands by their full amount (~387 of the ~457
+tokens; only the agent's ~70–79 tokens was ever real, and it was
+already counted as such).
+
+**`notes/audit-04-cost-waste.md` item 2 — ranked #2 in that session's
+waste ranking ("~457 tok/session, ~89% unused in a typical single-
+command session") — is retired.** It is not a real cost. The real,
+confirmed always-on cost of the my-method plugin is the
+security-reviewer agent's ~79 tokens, not ~457. `notes/audit-04-cost-
+plan.md` item 1 (FAZER AGORA) is closed by this result, not superseded
+by it — running the test was the whole action.
+
+**NOT itself re-verified by this test:** whether `claude plugin
+details`'s "Always-on" number is wrong for flagged components in
+general, or specific to this kit's shape — one plugin was checked, not
+the mechanism in the abstract. A future plugin with components that do
+NOT carry `disable-model-invocation: true` should not assume the same
+discount applies.
