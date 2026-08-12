@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## 2026-08-12 — avaliação de exposição do repositório público: mantido público sem alterações
+
+Levantamento pedido pelo usuário ao perceber que o repositório está público
+no GitHub: toda ocorrência do nome de usuário Windows, do nome próprio e de
+caminhos absolutos da máquina foi mapeada por arquivo:linha (kit, notas,
+changelog, playbook); `gitleaks git .` (instalado via winget nesta sessão,
+nunca tinha rodado neste repositório) escaneou os 44 commits do histórico
+inteiro e voltou `no leaks found`; `friction.md` e este CHANGELOG foram
+lidos por inteiro à procura de frases desconfortáveis em público — nenhuma
+encontrada.
+
+- **Nenhum segredo técnico existe no repositório** — a busca cobriu o
+  histórico completo, não só o HEAD.
+- **O que existe é PII comum**: nome completo (`Jeferson Dullius`) em
+  `plugin.json`/`marketplace.json`/matriz; e-mail real de commit
+  (`jefersondullius30@gmail.com`) presente nos 44 commits — o item de maior
+  valor de identificação, por ser metadado do git e não texto de arquivo,
+  logo não removível sem reescrever o histórico; caminhos absolutos da
+  máquina (`C:\Users\Jeferson\...`) em `notes/research-maintenance/` e
+  `notes/maintenance/LAST-CHECK.md`; nomes de dois projetos pessoais fora
+  deste repositório (`calculo-investimento`, `meu-organizador`).
+- Todo o conteúdo em arquivo (nome no metadado do plugin, "Jeferson" nas
+  linhas HUMAN DECISION da matriz, caminhos nas notas) é DESCRITIVO — troca
+  de texto sem quebrar nada; só o autor dos commits é estrutural, preso ao
+  histórico do git.
+- **Decisão consciente do usuário: manter o repositório público, sem
+  nenhuma alteração.** Opções levantadas e recusadas por ora: privar o
+  repositório, trocar o e-mail dos commits futuros para o *noreply* do
+  GitHub, anonimizar o texto do HEAD, reescrever o histórico inteiro
+  (`git filter-repo`).
+
 ## 2026-08-12 — auditoria de custo (sessão 4/4) aplicada: plugin 0.3.1
 
 Aplicada a proposta `notes/proposals/audit-04-cost-fixes-2026-08-12.md`,
