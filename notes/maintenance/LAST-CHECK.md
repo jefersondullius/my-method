@@ -548,3 +548,71 @@ no changes from the proposed text:
 
 CHANGELOG entry: same date, "auditoria de custo (sessão 4/4) aplicada:
 plugin 0.3.1".
+
+---
+
+## 2026-08-12 — T3 executed (ad-hoc): the `if`-scoped gate re-verified from a false alarm
+
+Not a run of `/my-method:update-method`. The user asked for the gate to
+be tested directly, in a real my-method project
+(`C:\Users\Jeferson\Documents\dev\calculo-investimento`, which has
+`method.md`, `PLAN.md`, `STATE.md`, and commit history), with the exact
+command `git commit --dry-run --allow-empty -m "..."`, and to revert
+`hooks.json`'s `if` field immediately if plain git output came back
+instead of the gate's deny reason.
+
+**First attempt — false alarm, methodology bug, not a real gate
+failure.** The dry-run was run via this session's own Bash tool, which
+had been open since before today's `hooks.json` edits. Plain git output
+came back (`On branch master / nothing to commit, working tree clean`)
+for the dry-run, matching the user's stated revert-immediately
+condition. The `if` field was reverted. **Then the reverted config was
+re-tested the same way and ALSO returned plain git output** — the
+telltale sign the first result was not about the `if` field at all:
+`health-check.md`'s own probe 3 already documents that "plugin hook
+changes need `/reload-plugins` or a restart to take effect," and this
+session's Bash tool had been running since before any of today's
+`hooks.json` edits. Every command run through it, with or without the
+`if` field on disk, was actually exercising whatever hook state this
+session loaded at its own start — not the file as currently written.
+Testing a hook-config change from within the same long-running session
+that made the edit is invalid by the kit's own documented caveat.
+
+**Corrected method:** `cd <project> && claude -p "<prompt asking to run
+the exact command and show raw output>"` — a genuinely fresh process,
+which loads `hooks.json` from disk at spawn time, the same mechanism
+`notes/maintenance/LAST-CHECK.md`'s T2 entry (above) already used
+successfully for the `/context` test.
+
+**Four fresh-session results, `if` field back in place
+(`"if": "Bash(git commit*)"`), all in `calculo-investimento`:**
+
+1. Bare `git commit --dry-run --allow-empty -m "..."` → **DENIED**,
+   gate's reason shown raw (`no verify evidence at
+   .claude/last-verify.json...`), exit code 1.
+2. `git add -A && git commit --dry-run --allow-empty -m "..."` (the
+   realistic shape a task commit takes: stage, then commit, one call)
+   → **DENIED**, same reason.
+3. `echo marker && git commit --dry-run --allow-empty -m "..."` (a
+   generic chain, standing in for any command run before the commit in
+   the same call) → **DENIED** — the tool reported the call was
+   intercepted before either `echo` or `git commit` produced output.
+4. `git status` alone → passes through normally, exit code 0, no gate
+   interference.
+
+**Corrected conclusion: the `if` field is safe.** Claude Code's `if`
+matching is not a naive whole-string prefix check — it correctly
+identifies `git commit` inside a compound command regardless of what
+precedes it in the same call, which is exactly the shape (`git add ...
+&& git commit ...`) a real task commit is expected to take. The
+proposal's own open caveat (`kit/my-method/commands/*.md` never using
+`git -C` or a wrapper) remains the one documented gap, unrelated to
+this false alarm. `hooks.json` ends this entry byte-identical to what
+`da4908d` shipped (`git diff` against HEAD is empty) — no new commit
+was needed for the file itself.
+
+**Recorded for next time, so this is not re-discovered the hard way:**
+never validate a `hooks.json` (or any plugin-loaded config) change from
+within the same session that edited it. Always spawn a fresh `claude
+-p` process rooted in the target directory, exactly as T2 and this
+entry both did.
