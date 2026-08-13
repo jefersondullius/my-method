@@ -1,5 +1,47 @@
 # CHANGELOG
 
+## 2026-08-13 — retrospectiva de friction (2 itens pendentes) + regra de invocação obrigatória do frontend-design
+
+Aplicada parcialmente `notes/proposals/friction-retro-2026-08-13.md`: uma
+retrospectiva pedida pelo usuário sobre os dois itens de friction que v4–v9
+tinham deixado sem processar — `friction.md` MINE 2026-08-13 (citar skill
+na ficha da tarefa) e `friction-logtech.md` MINE 2026-08-12 (separar tarefa
+funcional de acabamento visual). Resposta à pergunta feita antes da
+retrospectiva: o item da separação de tarefas NÃO passou despercebido pela
+v9 — já tinha sido avaliado e descartado, duas vezes, citando a própria
+frase do autor da entrada pedindo para esperar mais sinal do logtech.
+
+Conclusão da análise: nenhum dos dois itens tinha atrito suficiente para
+virar regra do `method.md` agora — o item 1 é hipótese antecipada (zero
+ocorrências, rotulada pelo próprio autor como "não atrito observado"), o
+item 2 tem uma ocorrência só, e o fato de o logtech não continuar não
+fortalece isso, só torna o gatilho original ("resto do logtech")
+inalcançável. Recomendação: os dois virariam linhas do Eixo F da
+`notes/maintenance/WATCHLIST.md` (o mecanismo já existente pra "questão
+real, evidência insuficiente"), com o gatilho do item 2 reformulado como
+agnóstico de projeto.
+
+**Decisão do usuário:** aplicar só a recomendação 1 (linha nova no Eixo F
+sobre citação de skill em ficha de tarefa); não aplicar nada da
+recomendação 2, nem como linha de watchlist — o item da separação
+funcional/visual fica exatamente como a v9 deixou, sem ação adicional.
+
+**Terceiro item, fora das duas recomendações da proposta**, aplicado no
+mesmo turno por instrução direta do usuário (não lastreado em friction —
+proveniência registrada como exceção consciente, mesma classe de v4 e v7):
+`kit/my-method/skills-library/frontend-design/SKILL.md` e o `README.md` da
+pasta ganharam uma regra de invocação obrigatória — em qualquer projeto
+onde essa skill for implantada, toda mudança de layout, por menor que
+seja, deve chamá-la explicitamente (mantendo
+`disable-model-invocation: true` na cópia implantada também, e instruindo
+o `CLAUDE.md` do projeto e as fichas que tocam layout a invocar
+`/frontend-design` explicitamente). `method.md` não foi tocado — a regra
+viaja com o ativo guardado, não com o texto canônico do método; inventário
+do plugin reconfirmado inalterado (`claude plugin details my-method`: 6
+skills). Pendência registrada na proposta: `method.md` ainda não referencia
+`kit/my-method/skills-library/` — usar essa pasta no Passo 3b continua
+sendo otimização de implementação, não parte documentada do método.
+
 ## 2026-08-13 — pesquisa ao vivo de 7 skills/plugins + primeira skill guardada dormente no kit
 
 Pedido do usuário: verificar ao vivo, para `frontend-design`, `impeccable`,

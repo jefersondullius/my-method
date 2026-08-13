@@ -1,4 +1,4 @@
-# FRICTION
+# FRICTION (logtech)
 
 ## YOURS
 

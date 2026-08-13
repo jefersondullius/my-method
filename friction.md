@@ -393,3 +393,11 @@ pedido do usuário.
 Palavras do usuário (verbatim):
 
 > sim, trate as duas como friction real.
+
+### 2026-08-13 — sem tarefa corrente
+
+Feito imediatamente antes: commit e push do lote de mudanças da sessão (método v9 e pesquisa de skills) foram feitos, e o assistente reportou de volta ao usuário que a decisão sobre a skill `brainstorming`/`superpowers` continuava em aberto.
+
+Palavras do usuário (verbatim):
+
+> ideia: quando uma skill relevante para uma tarefa está disponível (instalada ou guardada  (exemplo: frontend-design)), a ficha da tarefa deveria citar explicitamente que ela deve ser usada — em vez de confiar só no disparo automático por descrição, que é mecanismo frágil (imposição instrucional, não estrutural, como o próprio kit já reconhece para next-task/start-project). Sem isso, corro o risco de instalar/guardar uma skill e "esquecer" que ela existe na hora de construir. Ainda não aconteceu de fato — é hipótese antecipada, não atrito observado.

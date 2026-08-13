@@ -17,6 +17,15 @@ project's .claude/skills/frontend-design/SKILL.md at project scope.
 Provenance: notes/research-skills/frontend-design.md,
 verified live 2026-08-10 and 2026-08-13. Source:
 https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md
+
+INVOCATION RULE (user directive, 2026-08-13, not friction-backed — a
+conscious exception): wherever this skill is deployed into a real
+project, any layout change, however small, must call it explicitly.
+Keep disable-model-invocation: true on the deployed copy too, and have
+the project's CLAUDE.md and any task card touching layout instruct an
+explicit /frontend-design invocation before or during that work —
+never rely on Claude's own description-based auto-trigger for this
+skill. See kit/my-method/skills-library/README.md for the full note.
 -->
 
 # Frontend Design
