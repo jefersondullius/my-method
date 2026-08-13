@@ -1,5 +1,139 @@
 # CHANGELOG
 
+## 2026-08-13 — pesquisa ao vivo de 7 skills/plugins + primeira skill guardada dormente no kit
+
+Pedido do usuário: verificar ao vivo, para `frontend-design`, `impeccable`,
+`webapp-testing`, `skill-creator`, `find-skills`, `grilling` e a skill
+`brainstorming` do plugin `superpowers`, três perguntas — (1) o
+pacote empacota uma skill só ou várias, dá pra ativar só uma; (2) dá pra
+copiar manualmente o SKILL.md pra fora do sistema `/plugin`; (3) qual o
+trade-off de copiar manualmente vs. instalar. Nada foi instalado durante a
+pesquisa. Três subagentes rodaram em paralelo: um sobre o mecanismo geral,
+dois sobre as skills específicas.
+
+**Achado central, verificado ao vivo contra `code.claude.com/docs/en/skills`
+(2026-08-13):** o custo de description sempre-ligada por sessão é
+indiferente ao canal de instalação — o mesmo comportamento vale para
+`.claude/skills/`, `~/.claude/skills/` ou plugin via marketplace; a tabela
+"Where skills live" da documentação trata os três como fontes de descoberta
+equivalentes. A forma real de zerar esse custo já existe nativamente:
+`disable-model-invocation: true` no frontmatter — "description not in
+context, full skill loads when you invoke" — mas só é aplicável a uma
+cópia que você controla o arquivo (não dá pra editar com segurança a cópia
+congelada de um plugin instalado via marketplace).
+
+- **NOVO `notes/research-skills/impeccable.md`**: nunca pesquisada antes
+  neste repositório. É `pbakaus/impeccable`, Apache 2.0, 1 skill com 23
+  subcomandos — mas a função real mora em 36 scripts + 36 arquivos de
+  referência fora do SKILL.md; copiar só o SKILL.md perde quase tudo.
+- **Complementos de Q2/Q3 (2026-08-13) nos seis arquivos já existentes**
+  (`frontend-design.md`, `webapp-testing.md`, `skill-creator.md`,
+  `find-skills.md`, `grilling.md`, `superpowers.md`): achados novos
+  incluem um bug aberto e não corrigido no marketplace `anthropic-agent-skills`
+  (`anthropics/claude-code#53426`) que instala as 17 skills do repo em vez
+  do subconjunto declarado por plugin; a correção de que `vercel-labs/skills`
+  empacota só 1 skill (`find-skills`), não várias; e a confirmação de que
+  `brainstorming` (dentro do `superpowers`) depende tecnicamente de um
+  arquivo irmão (`visual-companion.md`) na mesma pasta, e que copiar só a
+  pasta da skill evita por completo o hook `SessionStart` do plugin (~1.300
+  tokens injetados em toda sessão, recusa registrada do mantenedor em
+  tornar isso opcional — issue #1456, "not planned").
+
+**Decisões do usuário, uma por uma:**
+- `frontend-design`: aplicada — cópia guardada dormente (ver abaixo).
+- `grilling`: já resolvido em sessão anterior, nada a fazer.
+- `find-skills`: não instalar — motivo nunca foi custo de description, foi
+  estar fora do sistema `/plugin` auditável; não mudou.
+- `impeccable` e `skill-creator`: não instalar por nenhum caminho — cópia
+  manual quebra a função real, nenhum gatilho de projeto justificou o custo
+  pleno via `/plugin`.
+- `webapp-testing`: não instalar — mesmo com gatilho, o pacote está com bug
+  documentado e traria 17 skills não pedidas.
+- `brainstorming`/`superpowers`: sem decisão registrada — não foi
+  mencionado nas decisões desta rodada, sinalizado de volta ao usuário.
+
+**NOVO `kit/my-method/skills-library/`** (+ `README.md` explicando o
+propósito): pasta deliberadamente FORA do que o Claude Code varre como
+diretório de skills (não se chama `skills/`) — guarda cópias pré-avaliadas,
+prontas pra implantar, sem estarem instaladas ou ativas. Primeira entrada:
+`frontend-design/` (`SKILL.md` com `disable-model-invocation: true`
+adicionado ao frontmatter original + `LICENSE.txt`, Apache 2.0, cópia
+literal do upstream exceto essa única linha). Confirmado dormente via
+`claude plugin details my-method`: inventário inalterado (6 skills, ~462
+tok always-on, plugin 0.4.0) depois da adição. `method.md` NÃO foi tocado —
+usar essa pasta no Passo 3b é uma otimização de implementação, não algo que
+o método hoje descreve; se o padrão se provar útil, precisa de proposta e
+aprovação própria, como qualquer mudança de method.md.
+
+## 2026-08-13 — método v9 aplicado: atrito de projeto real (logtech) + atrito deste repositório, plugin 0.4.0
+
+Aplicada `notes/proposals/logtech-friction-proposal-2026-08-13.md`,
+todos os cinco itens aprovados (item 3 com uma modificação pedida na
+aprovação: a busca de skill também usa o mecanismo `find-skills` e
+considera skills de comunidade, não só oficiais). Primeira vez que uma
+proposta nasce do `friction.md` de um projeto real (logtech, copiado
+para `friction-logtech.md`) em vez de comparação ou manutenção
+agendada — e primeira vez que uma mesma rodada mistura essa origem com
+atrito real deste próprio repositório, confirmado ao vivo pelo usuário
+depois de pedir explicação do que dois gaps significavam.
+
+- **STEP 1 ganha uma quinta pergunta de abertura**: restrições legais
+  ou regulatórias do domínio do projeto. Antes, "legal exposure" era
+  citada como classe protegida mas nunca tinha pergunta própria — só
+  as outras quatro (offline/online, login, pagamento, dado pessoal)
+  tinham. Origem: `friction.md` (deste repositório), MINE, 2026-08-13.
+- **STEP 3 fixa "custo" em dois eixos**: dinheiro (hospedagem, banco,
+  auth — o que cobra quando o plano gratuito acaba) e sessões do plano
+  Pro (stack mais pesada consome mais sessões pelo mesmo resultado). A
+  cláusula de custo já existia, mas era vaga o bastante para passar
+  incólume pelo próprio gap que devia prevenir. Origem:
+  `friction-logtech.md`, MINE, 2026-08-12.
+- **NOVO STEP 3b — busca de skill da stack**, entre a decisão de stack
+  e o plano: primeiro passo oficial/first-party, segundo passo via
+  `find-skills` (`npx skills find <stack>`, `vercel-labs/skills` —
+  registro de terceiros, fora do marketplace do Claude Code) para
+  skills de comunidade, opcionais e julgadas por utilidade. Instala só
+  em escopo de projeto, nunca de usuário. Origem: `friction-logtech.md`,
+  MINE (dois registros reforçando o mesmo ponto) + YOURS (a pergunta
+  NOT VERIFIED sobre escopo de instalação, resolvida no mesmo dia),
+  ambos 2026-08-12; mecanismo `find-skills` pedido pelo usuário na
+  aprovação desta proposta, 2026-08-13, e já pesquisado antes em
+  `notes/research-skills/find-skills.md` (2026-08-10).
+- **STEP 5c ganha o gatilho "Behavior drift"**: quando uma tarefa
+  revela que o `SPEC.md` está errado ou incompleto (não é superfície
+  de segurança), a tarefa para, o usuário confirma a mudança em
+  português, e um novo `Approved: <data>` é anexado ao `SPEC.md` —
+  nunca editando uma linha anterior. Espelha o "Drift first" que já
+  existia para segurança, mas não tinha equivalente para
+  comportamento. Origem: `friction.md` (deste repositório), MINE,
+  2026-08-13.
+- **STEP 5d documenta o escopo real do gate de commit**: o hook
+  (`verify-gate.ps1`) já nega qualquer `git commit` sem evidência
+  fresca depois do primeiro commit do projeto, não só commits de
+  tarefa — só a exigência de "todos os três arquivos de status juntos"
+  é específica de tarefa. O texto do method.md descrevia só a parte
+  específica de tarefa. Nenhum comportamento mudou; o hook já estava
+  certo, o texto estava incompleto. Origem: `friction-logtech.md`,
+  YOURS, 2026-08-12, confirmado lendo `verify-gate.ps1` linhas 30–44
+  nesta sessão.
+
+Espelhos atualizados: `kit/my-method/commands/start-project.md` — cópia
+embutida do método → v9 (checagem mecânica: 290 linhas no canônico e na
+cópia embutida, 0 divergências), Step 1 operacional ganha a quinta
+pergunta (itens 6–8 renumerados), Step 3 operacional ganha os dois
+eixos de custo, novo Step 3b operacional espelha o STEP 3b canônico, o
+template de `STATE.md` ganha a linha da decisão de skill nas settled
+decisions. `kit/my-method/commands/next-task.md` — (d) Verify ganha o
+mesmo parágrafo "Behavior drift" antes da lista de linhas de segurança.
+`kit/my-method/.claude-plugin/plugin.json`: **0.3.1 → 0.4.0**.
+`claude plugin validate`: **✔ Validation passed**.
+
+Não aplicado, fora de escopo desta proposta por pedido explícito do
+usuário: separação entre tarefa funcional e tarefa de acabamento
+visual (`friction-logtech.md`, MINE) — atrito real, mas o usuário
+pediu para observar mais sinal do resto do logtech antes de virar
+regra do method.md.
+
 ## 2026-08-12 — avaliação de exposição do repositório público: mantido público sem alterações
 
 Levantamento pedido pelo usuário ao perceber que o repositório está público

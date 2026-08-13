@@ -85,6 +85,16 @@ Follow the card's "How we will check it".
   update status files. Do not commit. Go to the Stuck Protocol below
   if this is the second consecutive failure of the same check.
 
+Behavior drift: if building or verifying the task reveals that
+`SPEC.md` itself is wrong or incomplete for what the product actually
+needs — not a security surface, a behavior the SPEC never described —
+stop before continuing the task. Summarize the change to the user in
+Portuguese and wait for confirmation, the same gate as Step 2 of
+`start-project.md`. On confirmation, append a new
+`Approved: <YYYY-MM-DD>` line to `SPEC.md` — never edit or remove an
+earlier one — and update `STATE.md`'s settled decisions before
+resuming the task.
+
 Security rows on the card run inside this step, by kind:
 
 1. Drift check first: compare the diff against the card's declared

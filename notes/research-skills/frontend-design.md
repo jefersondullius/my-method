@@ -49,3 +49,11 @@
 - Exact tokenizer-measured token count of SKILL.md (only byte/word-based estimate given above).
 - Whether claude.ai (web chat) currently ships frontend-design pre-enabled for paid plans by default — asserted in the repo README, not independently re-checked on claude.ai itself.
 - That `claude-plugins-public` was this repo's prior name: inferred from a 301 redirect to the same repo ID, not from an explicit rename changelog.
+
+## Addendum (live, 2026-08-13) — manual-copy question
+
+**Q2 — manual copy of SKILL.md, outside `/plugin`:** Reconfirmed license (Apache 2.0, `skills/frontend-design/LICENSE.txt`) and folder contents via the GitHub API: the folder holds only 2 files, `LICENSE.txt` and `SKILL.md` — no `scripts/`, `agents/`, `references/`, or `assets/` subfolder [https://api.github.com/repos/anthropics/skills/contents/skills/frontend-design — accessed 2026-08-13]. Direct read of `SKILL.md` confirms no reference to any external script, subagent, hook, or extra file [https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md — accessed 2026-08-13]. **Manual copy preserves 100% of the function** — the simplest case checked in this round (compare against skill-creator and impeccable, both structurally dependent on bundled scripts/agents).
+
+**Q3 — trade-off:** No functional loss either way; the only thing given up by copying manually is the marketplace's automatic update if Anthropic revises the text later.
+
+**Applied 2026-08-13:** a vetted copy, frontmatter augmented with `disable-model-invocation: true`, was stored at `kit/my-method/skills-library/frontend-design/` (SKILL.md + LICENSE.txt) — deliberately outside any folder Claude Code scans for skills (`kit/my-method` has no `skills/` directory), confirmed dormant via `claude plugin details my-method` (inventory unchanged: 6 skills, same ~462 tok always-on). Not installed, not active — held ready for method.md STEP 3b to deploy into a project's `.claude/skills/frontend-design/` when a project's stack search finds it useful.

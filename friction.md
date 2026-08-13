@@ -347,4 +347,49 @@ porque toda receita perguntava "a ferramenta está viva?" e nenhuma perguntava
 defeito de origem, não uma regressão. Vale saber que ela serve para isso
 também.
 
+### 2026-08-13 — método v9 aplicado: atrito de logtech + atrito deste repositório — registro de proveniência
+
+Contexto: leitura de `friction-logtech.md` (atrito de um projeto real,
+logtech, copiado para este repositório) e escrita de
+`notes/proposals/logtech-friction-proposal-2026-08-13.md`. O que foi
+feito imediatamente antes: os cinco itens da proposta foram aprovados
+pelo usuário, um a um, item 3 com modificação (`find-skills` + skills
+de comunidade além das oficiais).
+
+Descoberta: primeira vez que uma proposta deste repositório nasce do
+`friction.md` de um projeto real em vez de comparação ou manutenção
+agendada — e primeira vez que a mesma rodada mistura essa origem com
+atrito real deste próprio repositório. Dois dos cinco itens (STEP 1 e
+STEP 5c) não tinham lastro em `friction-logtech.md`; viraram atrito
+real só depois que o usuário pediu explicação do que cada gap
+significava e confirmou ao vivo ("sim, trate as duas como friction
+real.", 2026-08-13) — registrado abaixo, em MINE, antes desta entrada.
+Proveniência mantida separada por item, tanto na proposta quanto no
+CHANGELOG: STEP 3, STEP 3b e STEP 5d citam `friction-logtech.md`; STEP
+1 e STEP 5c citam este `friction.md`.
+
+Por que importa: detalhe completo, item a item (texto exato, antes/
+depois, custo/perda/rollback) está em
+`notes/proposals/logtech-friction-proposal-2026-08-13.md` e no
+CHANGELOG (`2026-08-13 — método v9 aplicado`). Checagem mecânica
+pós-edição: método 290 linhas — 0 divergências contra a cópia embutida
+em `start-project.md`; `claude plugin validate` com `✔ Validation
+passed`; plugin 0.3.1 → 0.4.0.
+
 ## MINE
+
+### 2026-08-13 — sem tarefa corrente (revisão da proposta de atrito do logtech)
+
+Contexto: sessão lendo `friction-logtech.md` (atrito de um projeto real,
+logtech, copiado para este repositório) e escrevendo
+`notes/proposals/logtech-friction-proposal-2026-08-13.md`. O que foi
+feito imediatamente antes: a proposta apontou que dois itens pedidos
+pelo usuário — pergunta sobre restrições legais no Passo 1, e um passo
+para quando o SPEC precisa reabrir no meio do projeto — não tinham
+nenhuma entrada correspondente em `friction-logtech.md`, e por isso não
+foram propostos; o assistente explicou o que cada um significaria, a
+pedido do usuário.
+
+Palavras do usuário (verbatim):
+
+> sim, trate as duas como friction real.

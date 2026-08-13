@@ -64,3 +64,13 @@
 [14] raw.githubusercontent.com/anthropics/claude-plugins-official/main/.claude-plugin/marketplace.json — accessed 2026-08-10
 [15] github.com/mattpocock/skills/issues/527 — accessed 2026-08-10
 [16] raw.githubusercontent.com/mattpocock/skills/main/skills/productivity/grilling/agents/openai.yaml — accessed 2026-08-10
+
+## Addendum (live, 2026-08-13) — manual-copy question
+
+**Q1 reconfirmed + a non-interactive path found:** repo still has 25 skills total, `grilling` one of them; the official marketplace still only offers the whole 25-skill bundle (`mattpocock-skills`) via `/plugin`. New finding: the `npx skills` CLI (the same tool behind `find-skills`, maintained at `vercel-labs/skills`) documents a **non-interactive `--skill` flag**, e.g. `npx skills add vercel-labs/agent-skills --skill frontend-design --skill skill-creator`, with wildcard `*` and a `-y` flag for CI use [https://raw.githubusercontent.com/vercel-labs/skills/main/README.md — accessed 2026-08-13]. By the same documented, repo-agnostic syntax, `npx skills add mattpocock/skills --skill grilling` should select only that skill — not run live this session, but the flag is real and not specific to any one source repo. Default install mode creates symlinks to a canonical copy; a `--copy` flag makes an independent copy — either way the result is an editable local `SKILL.md`, not a closed/managed install.
+
+**Q2 — manual copy:** MIT license reconfirmed via the repo's root `LICENSE` file, "Copyright (c) 2026 Matt Pocock" [https://raw.githubusercontent.com/mattpocock/skills/main/LICENSE — accessed 2026-08-13]. Folder contents reconfirmed via the GitHub API: only `SKILL.md` + `agents/openai.yaml` (Codex-CLI metadata, irrelevant to Claude Code) [https://api.github.com/repos/mattpocock/skills/contents/skills/productivity/grilling — accessed 2026-08-13]. Zero technical dependency on other files or skills — cross-references to other skills in the repo are textual handoffs only. Manual copy of just `SKILL.md` preserves 100% of the function.
+
+**Q3 — trade-off:** No functional loss. Manual copy (by hand, or via the `--skill` flag) avoids installing the other 24 unrelated skills that the official marketplace route would bring along; loses only the marketplace's auto-update.
+
+**Status 2026-08-13:** already resolved in an earlier session — nothing to do.

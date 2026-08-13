@@ -52,3 +52,13 @@
 - Exact tokenizer-measured token count of SKILL.md (only byte/word/line counts given above).
 - Full byte-for-byte diff of every supporting file (agents/, references/, scripts/, eval-viewer/) between the two copies — only the SKILL.md blob SHA was directly compared.
 - Download/install counts or user ratings for the plugin (no such live metric was found/published).
+
+## Addendum (live, 2026-08-13) — manual-copy question
+
+**Q1 reconfirmed:** official marketplace still packages it as its own dedicated single-skill plugin (`skill-creator@claude-plugins-official`), installable alone — this one is NOT affected by the `anthropic-agent-skills` bundle bug found for `webapp-testing` today (see that file's addendum).
+
+**Q2 — what is lost copying only SKILL.md:** license reconfirmed as Apache 2.0 via the skill's own `LICENSE.txt` [https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/LICENSE.txt — accessed 2026-08-13]. Direct read of `SKILL.md` confirms the eval/benchmark pipeline is treated as load-bearing, not optional, in the instructions: `scripts/aggregate_benchmark.py` is cited as mandatory to produce `benchmark.json`; the eval viewer (`eval-viewer/generate_review.py`) is explicitly required *before* evaluating, with the text discouraging hand-written HTML instead; `scripts/package_skill.py` is required to produce the installable `.skill` file. Of the 3 bundled subagents (`agents/analyzer.md`, `grader.md`, `comparator.md`), only `comparator.md` is explicitly labeled optional. The text provides fallbacks for missing subagent support or missing browser, but **no fallback for missing scripts** — their presence is assumed [https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md — accessed 2026-08-13]. **Copying only SKILL.md keeps the "how to write a good skill" guidance in prose, but breaks the automated grading/benchmark/packaging engine that differentiates skill-creator from writing a skill by hand.**
+
+**Q3 — trade-off:** `/plugin` gives the full working eval pipeline plus marketplace updates; manual SKILL.md-only copy degrades to a reference checklist.
+
+**Decision 2026-08-13:** not installed via any path — manual copy breaks the real function, and no trigger has fired to justify the full cost via `/plugin`.

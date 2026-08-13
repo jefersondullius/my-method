@@ -1,4 +1,4 @@
-# METHOD — v8 (maintenance run 2)
+# METHOD — v9 (logtech friction round 1)
 
 *Nota (pt-BR): sétima versão. Origem: rec 3 da auditoria 01 — o passo
 10 do fluxo-alvo (recomendação de modelo e esforço no início da
@@ -25,6 +25,20 @@ frontmatter de uma skill ou de um subagente. O que só o usuário troca
 mudou; nenhum comportamento do método mudou. Esta é a primeira revisão
 da classe **mudança externa**, distinta do atrito de piloto e das três
 exceções conscientes registradas acima.*
+
+*Nota (pt-BR): nona versão, duas origens registradas juntas pela
+primeira vez. STEP 3 (custo em dinheiro e em sessões do plano Pro), o
+novo STEP 3b (busca de skill da stack — oficial, mais `find-skills`
+para skills de comunidade) e STEP 5d (escopo real do gate de commit,
+só documentação — nenhum comportamento mudou) vêm do atrito de um
+projeto real (logtech, `friction-logtech.md`, 2026-08-12) copiado para
+este repositório. STEP 1 (pergunta de abertura sobre restrições legais
+ou regulatórias) e STEP 5c (novo gatilho "Behavior drift" para reabrir
+o SPEC quando uma tarefa revela que ele está errado ou incompleto) vêm
+do atrito real deste próprio repositório, confirmado ao vivo pelo
+usuário em 2026-08-13 depois de pedir explicação do que cada lacuna
+significava — registrado em `friction.md`, MINE. Proposta completa em
+`notes/proposals/logtech-friction-proposal-2026-08-13.md`.*
 
 ## STEP 0 — BEFORE ANYTHING
 
@@ -55,10 +69,12 @@ when they have no opinion.
 
 Open with the critical block, ONE question at a time, one message
 each: does it run offline/local or online/hosted; does it need login;
-does it involve payment; does it store other people's personal data.
-Any question in these classes — money, other people's data,
-access/login, hosting, legal exposure — is always asked alone,
-whenever it comes up, even late in the interview.
+does it involve payment; does it store other people's personal data;
+does it operate under legal or regulatory constraints tied to its
+domain (e.g. labor law for a workforce-management tool, health-data
+rules, financial regulation). Any question in these classes — money,
+other people's data, access/login, hosting, legal exposure — is always
+asked alone, whenever it comes up, even late in the interview.
 
 After the critical block is settled, related questions MAY be grouped
 in one message — small groups, answers separable one by one. Still
@@ -97,8 +113,32 @@ a real gate — the user can evaluate behaviour, not technology.
 
 Decide the stack yourself. Present the decision already made, in
 Portuguese, with plain-language reasoning and what the runner-up would
-have cost. Do not ask the user to choose between things they cannot
-evaluate. Write it into `STATE.md` with the reason, not just the name.
+have cost — cost stated on two axes: money (hosting, database, auth —
+what starts charging once the free tier ends) and sessions (a stack
+that needs more code and more configuration spends more of the user's
+Pro-plan sessions for the same result). Do not ask the user to choose
+between things they cannot evaluate. Write it into `STATE.md` with the
+reason, not just the name.
+
+## STEP 3b — SKILLS FOR THE STACK
+
+After the stack is decided, search for a skill for it in two passes:
+first the official/first-party one (the vendor's own documented skill,
+or Claude Code's own marketplace via `/plugin`), then the wider
+community ecosystem via the `find-skills` mechanism (`npx skills find
+<stack-name>`, from `vercel-labs/skills` — a third-party registry,
+separate from Claude Code's own marketplace). Community results are
+optional, judged on usefulness, not preferred by default — official
+still wins when both exist. Tell the user what was found, in
+Portuguese, and whether any of it is worth adding to this project. If
+yes, install it at project scope (`.claude/skills/` for a loose skill;
+`--scope project` for a plugin) — never user scope, which would load
+stack-specific context into every future project regardless of stack.
+Record the decision (skill name, source, scope, reason) in `STATE.md`.
+This runs once, right after STEP 3, before STEP 4 — the plan's task
+cards should already know whether a skill's conventions shape how they
+get built and verified, the same way they already know the security
+tier.
 
 ## STEP 4 — PLAN
 
@@ -167,6 +207,14 @@ c) VERIFY — not negotiable: **attempt automated verification first**;
    that adds an automated check (including the card's AUTOMATED
    security rows) adds it to the entrypoint as part of the task; that
    is how a check joins the regression set.
+   Behavior drift: if building or verifying the task reveals that
+   `SPEC.md` itself is wrong or incomplete for what the product
+   actually needs — not a security surface, a behavior the SPEC never
+   described — stop before continuing the task. Summarize the change
+   to the user in Portuguese and wait for confirmation, the same gate
+   as STEP 2. On confirmation, append a new `Approved: <YYYY-MM-DD>`
+   line to `SPEC.md` — never edit or remove an earlier one — and
+   update STATE.md's settled decisions before resuming the task.
    The card's security rows run inside this step, by kind:
    - Drift first: if the diff turned on a risk surface the card does
      not declare (new endpoint, new dependency, upload path, stored
@@ -192,8 +240,14 @@ d) Sync EVERY status-bearing file in one commit — `STATE.md`, `PLAN.md`
    `STATE.md`. Commit in English.
    The staged set must include `.claude/last-verify.json` together
    with the three status files — the commit gate denies a task commit
-   missing any of them, and denies any commit without fresh PASS
-   evidence.
+   missing any of them.
+   This gate is not scoped to task commits: after the project's first
+   commit, it denies ANY `git commit` in this repo — including
+   config-only or tooling commits made with no `TASK-XXX` in progress —
+   unless `.claude/last-verify.json` shows a fresh PASS. Before a commit
+   like that, run the verify entrypoint (`scripts/verify.ps1`) even when
+   nothing new needs checking; it re-runs the existing regression set
+   and refreshes the evidence file.
    **Then end the turn with exactly
    this text and nothing else:**
    > Tarefa concluída e commitada. Rode `/clear` antes de continuar.
